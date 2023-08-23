@@ -20,6 +20,7 @@ int main(void) {
    srand(time(0)); 
 
    //
+   puts("Hello Kaden");
    guessGame();
 } // end main
 

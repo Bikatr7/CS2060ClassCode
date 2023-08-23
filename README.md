@@ -1,2 +1,2 @@
 # CS2060ClassCode
- https://deitel.com/c-how-to-program-9-e
+ from https://deitel.com/c-how-to-program-9-e
