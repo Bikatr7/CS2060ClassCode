@@ -4,7 +4,28 @@
 
 // function main begins program execution 
 int main(void) {
-   printf("Welcome to C!\n");
+
+	int length = 0;
+	int width = 0; 
+	int area = 0;
+
+	char* string_to_print = "Enter the length";
+
+	puts(string_to_print);
+	
+	scanf("%d", &length);
+
+	puts("Enter the width");
+
+	scanf("%d", &width);
+
+	area = length * width;
+
+	printf("Length: %d width: %d and area is %d", length, width, area);
+
+	return 0;
+
+
 } // end function main 
 
 
