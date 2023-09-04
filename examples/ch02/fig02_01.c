@@ -2,31 +2,48 @@
 // A first program in C.
 #include <stdio.h>
 
-// function main begins program execution 
 int main(void) {
 
-	int length = 0;
-	int width = 0; 
-	int area = 0;
+    int length = 0;
+    int width = 0;
+    int area = 0;
 
-	char* string_to_print = "Enter the length";
+    int result = 0;
 
-	puts(string_to_print);
-	
-	scanf("%d", &length);
+    double divisionResult = 0.0;
 
-	puts("Enter the width");
+    char* string_to_print = "Enter the length";
 
-	scanf("%d", &width);
+    puts(string_to_print);
 
-	area = length * width;
+    while (1) {  
+        result = scanf("%d", &length);
 
-	printf("Length: %d width: %d and area is %d", length, width, area);
+        while (getchar() != '\n');
+        if (result == 1) {
+            break;  
+        }
+        else 
+        {
+           puts("Invalid input for length. Please enter a number.");
+        }
+    }
 
-	return 0;
+    puts("Enter the width");
+    scanf("%d", &width);
 
+    area = length * width;
 
-} // end function main 
+    printf("Length: %d width: %d and area is %d\n", length, width, area);
+
+    divisionResult = (double) length / width;
+
+    printf("Average Value: %.1f", divisionResult);
+
+    return 0;
+
+} // end function main
+
 
 
 
