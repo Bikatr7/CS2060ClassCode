@@ -9,13 +9,27 @@ int main(void) {
    int failures = 0; 
    int student = 1;  
 
+   int result = 0; // one exam result 
+
    // process 10 students using counter-controlled loop 
    while (student <= 10) {
+
       // prompt user for input and obtain value from user 
       printf("%s", "Enter result (1=pass,2=fail): ");
-      int result = 0; // one exam result 
-      scanf("%d", &result);
 
+      while(1)
+      {
+          scanf("%d", &result);
+
+          if (result == 1 || result == 2)
+          {
+              break;
+          }
+          else
+          {
+              puts("Invalid Input, Please enter 1 or 2");
+          }
+      }
       // if result 1, increment passes 
       if (result == 1) {     
          passes = passes + 1;
@@ -23,6 +37,8 @@ int main(void) {
       else { // otherwise, increment failures 
          failures = failures + 1;
       } // end else 
+
+      result = 0;
 
       student = student + 1; // increment student counter  
    } // end while 
@@ -35,6 +51,9 @@ int main(void) {
    if (passes > 8) {
       puts("Bonus to instructor!");
    } // end if 
+
+   return 0;
+
 } // end function main 
 
 
