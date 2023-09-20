@@ -16,8 +16,10 @@ void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, uns
 //Gets a valid integer from the user.
 int getValidInt(int min, int max, int sentinel);
 
+// Calculates the charges for the rental property.
 double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
 
+// Prints the number of nights and the charges for the rental property.
 void printNightsCharges(unsigned int nights, double charges);
 
 // I dunno how do document functions in C. So I'll just use docstrings.
@@ -148,4 +150,27 @@ double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsig
     }
 
     return totalCharge;
+}
+
+//--------------------start-of-printNightsCharges()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void printNightsCharges(unsigned int nights, double charges) 
+{
+
+    /*
+    *
+    * Prints the number of nights and the charges for the rental property.
+    * 
+    * Parameters:
+    * nights (unsigned int): The number of nights the rental property is rented for.
+    * charges (double): The total charge for the rental property.
+    * 
+    * Returns:
+    * None.
+    * 
+    * */
+
+    printf("\nRental Charges\n\n");
+    printf("Nights          Charge\n");
+    printf("%-15u $%.2f\n\n", nights, charges);
 }
