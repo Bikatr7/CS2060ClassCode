@@ -26,9 +26,38 @@ void printNightsCharges(unsigned int nights, double charges);
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int main()
+int main() 
 {
-    
+    unsigned int totalNightsRented = 0;
+    double totalCharges = 0;
+
+    while (1) 
+    {
+        // Display the rental property information
+        printRentalPropertyInfo(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, INTERVAL_1_NIGHTS, INTERVAL_2_NIGHTS, RENTAL_RATE, DISCOUNT);
+
+        // Get the number of nights
+        int nights = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
+
+        // If user enters the sentinel value, exit loop and print the total summary
+        if (nights == SENTINAL_NEG1) 
+        {
+            printf("Rental Property Owner Total Summary\n\n");
+            printNightsCharges(totalNightsRented, totalCharges);
+            break;
+        }
+
+        // Calculate the charges
+        double charges = calculateCharges(nights, INTERVAL_1_NIGHTS, INTERVAL_2_NIGHTS, RENTAL_RATE, DISCOUNT);
+
+        // Update the total nights and charges
+        totalNightsRented += nights;
+        totalCharges += charges;
+
+        // Print the nights and charges for the current user
+        printNightsCharges(nights, charges);
+    }
+
     return 0;
 }
 
