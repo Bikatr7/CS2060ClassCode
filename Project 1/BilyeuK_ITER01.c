@@ -111,24 +111,21 @@ int getValidInt(int min, int max, int sentinel)
     int nights;
     char ch;
 
+    printf("Enter the number of nights you want to rent the property\n");
+
     // Loop until valid input is received
     while (1) {
 
-        printf("Enter the number of nights you want to rent the property\n");
         int result = scanf("%d", &nights);
 
         // Check if the input is a valid integer
         if (result != 1) 
         {
             printf("Error: Not an integer number. Please enter the value again.\n");
-
-            // Clear the input buffer
-            while ((ch = getchar()) != '\n' && ch != EOF);
-            continue; // skip to the next loop iteration
         }
 
         // Check if input is within the valid range or is the sentinel value
-        if ((nights >= min && nights <= max) || nights == sentinel) 
+        else if ((nights >= min && nights <= max) || nights == sentinel) 
         {
             return nights;
         }
@@ -136,6 +133,10 @@ int getValidInt(int min, int max, int sentinel)
         {
             printf("Error: Not within %d and %d. Please enter the value again.\n", min, max);
         }
+
+        // Clear the input buffer
+        while ((ch = getchar()) != '\n' && ch != EOF);
+
     }
 }
 
