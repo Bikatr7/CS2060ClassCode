@@ -14,7 +14,8 @@ double const DISCOUNT = 50;
 void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int
     interval1Nights, unsigned int interval2Nights, double rate, double discount);
 
-int getValidInt(int min, int max, bool sentinel);
+//Gets a valid integer from the user.
+int getValidInt(int min, int max, int sentinel);
 
 double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int
     interval2Nights, double rate, double discount);
@@ -37,24 +38,73 @@ void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, uns
     unsigned int interval2Nights, double rate, double discount) {
 
     /*
-    
-    Prints the rental property information.
-
-    Parameters:
-    minNights (unsigned int): The minimum number of nights the rental property can be rented for.
-    maxNights (unsigned int): The maximum number of nights the rental property can be rented for.
-	interval1Nights (unsigned int): The number of nights in the first interval.
-	interval2Nights (unsigned int): The number of nights in the second interval.
-	rate (double): The rate for the first interval.
-	discount (double): The discount for the second interval.
-
-    Returns:
-    None
-
+    *
+    * Prints the rental property information.
+    *
+    * Parameters:
+    * minNights (unsigned int): The minimum number of nights the rental property can be rented for.
+    * maxNights (unsigned int): The maximum number of nights the rental property can be rented for.
+	* interval1Nights (unsigned int): The number of nights in the first interval.
+	* interval2Nights (unsigned int): The number of nights in the second interval.
+	* rate (double): The rate for the first interval.
+	* discount (double): The discount for the second interval.
+    *
+    * Returns:
+    * None.
+    *
     */
 
     printf("Rental Property can be rented for %u to %u nights.\n", minNights, maxNights);
     printf("$%.2f rate a night for the first %u nights\n", rate, interval1Nights);
     printf("$%.2f discount rate a night for nights %u to %u\n", discount, interval1Nights + 1, interval2Nights);
     printf("$%.2f discount rate a night for each remaining night over %u.\n\n", 2 * discount, interval2Nights);
+}
+
+//--------------------start-of-getValidInt()----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+int getValidInt(int min, int max, int sentinel) {
+
+    /*
+    * 
+    * Gets a valid integer from the user.
+    * 
+    * Parameters:
+    * min (int): The minimum value the user can enter.
+    * max (int): The maximum value the user can enter.
+    * sentinel (int): The value that will end the loop.
+    * 
+    * Returns:
+    * int: The valid integer the user entered.
+    * 
+	*/
+
+    int nights;
+    char ch;
+
+    // Loop until valid input is received
+    while (1) {
+
+        printf("Enter the number of nights you want to rent the property\n");
+        int result = scanf("%d", &nights);
+
+        // Check if the input is a valid integer
+        if (result != 1) 
+        {
+            printf("Error: Not an integer number. Please enter the value again.\n");
+
+            // Clear the input buffer
+            while ((ch = getchar()) != '\n' && ch != EOF);
+            continue; // skip to the next loop iteration
+        }
+
+        // Check if input is within the valid range or is the sentinel value
+        if ((nights >= min && nights <= max) || nights == sentinel) 
+        {
+            return nights;
+        }
+        else 
+        {
+            printf("Error: Not within %d and %d. Please enter the value again.\n", min, max);
+        }
+    }
 }
