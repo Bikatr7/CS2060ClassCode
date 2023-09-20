@@ -11,14 +11,12 @@ double const DISCOUNT = 50;
 
 
 //Prints the rental property information.
-void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int
-    interval1Nights, unsigned int interval2Nights, double rate, double discount);
+void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
 
 //Gets a valid integer from the user.
 int getValidInt(int min, int max, int sentinel);
 
-double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int
-    interval2Nights, double rate, double discount);
+double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
 
 void printNightsCharges(unsigned int nights, double charges);
 
@@ -34,8 +32,8 @@ int main()
 
 //--------------------start-of-printRentalPropertyInfo()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights,
-    unsigned int interval2Nights, double rate, double discount) {
+void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount) 
+{
 
     /*
     *
@@ -62,7 +60,8 @@ void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, uns
 
 //--------------------start-of-getValidInt()----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int getValidInt(int min, int max, int sentinel) {
+int getValidInt(int min, int max, int sentinel) 
+{
 
     /*
     * 
@@ -107,4 +106,46 @@ int getValidInt(int min, int max, int sentinel) {
             printf("Error: Not within %d and %d. Please enter the value again.\n", min, max);
         }
     }
+}
+
+//--------------------start-of-calculateCharges()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount) 
+{
+
+    /*
+    * 
+    * Calculates the charges for the rental property.
+    * 
+    * Parameters:
+    * nights (unsigned int): The number of nights the rental property is rented for.
+    * interval1Nights (unsigned int): The number of nights in the first interval.
+    * interval2Nights (unsigned int): The number of nights in the second interval.
+    * rate (double): The rate for the first interval.
+    * discount (double): The discount for the second interval.
+    * 
+    * Returns:
+    * double: The total charge for the rental property.
+    * 
+    * */
+
+
+    double totalCharge = 0;
+
+    if (nights <= interval1Nights) 
+    {
+        totalCharge = nights * rate;
+    }
+    else if (nights <= interval2Nights) 
+    {
+        totalCharge = (interval1Nights * rate) + ((nights - interval1Nights) * (rate - discount));
+    }
+    else 
+    {
+        totalCharge = (interval1Nights * rate) +
+            ((interval2Nights - interval1Nights) * (rate - discount)) +
+            ((nights - interval2Nights) * (rate - 2 * discount));
+    }
+
+    return totalCharge;
 }
