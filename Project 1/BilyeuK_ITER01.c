@@ -173,9 +173,7 @@ double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsig
     }
     else 
     {
-        totalCharge = (interval1Nights * rate) +
-            ((interval2Nights - interval1Nights) * (rate - discount)) +
-            ((nights - interval2Nights) * (rate - 2 * discount));
+        totalCharge = (interval1Nights * rate) + ((interval2Nights - interval1Nights) * (rate - discount)) + ((nights - interval2Nights) * (rate - 2 * discount));
     }
 
     return totalCharge;
@@ -198,6 +196,12 @@ void printNightsCharges(unsigned int nights, double charges)
     * None.
     * 
     * */
+
+    if(nights <= 0)
+	{
+		printf("There were no rentals.\n");
+		return;
+	}
 
     printf("\nRental Charges\n\n");
     printf("Nights          Charge\n");
