@@ -39,7 +39,7 @@ int main()
         // Get the number of nights
         int nights = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
 
-        // If user enters the sentinel value, exit loop and print the total summary
+        // If user enters sentinel value, exit loop and print the total summary
         if (nights == SENTINAL_NEG1) 
         {
             printf("Rental Property Owner Total Summary\n\n");
@@ -50,7 +50,7 @@ int main()
         // Calculate the charges
         double charges = calculateCharges(nights, INTERVAL_1_NIGHTS, INTERVAL_2_NIGHTS, RENTAL_RATE, DISCOUNT);
 
-        // Update the total nights and charges
+        // Update total nights and charges
         totalNightsRented += nights;
         totalCharges += charges;
 
@@ -167,14 +167,19 @@ double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsig
 
     double totalCharge = 0;
 
+    // Interval 0
     if (nights <= interval1Nights) 
     {
         totalCharge = nights * rate;
     }
+
+    // Interval 1
     else if (nights <= interval2Nights) 
     {
         totalCharge = (interval1Nights * rate) + ((nights - interval1Nights) * (rate - discount));
     }
+
+    // Interval 2
     else 
     {
         totalCharge = (interval1Nights * rate) + ((interval2Nights - interval1Nights) * (rate - discount)) + ((nights - interval2Nights) * (rate - 2 * discount));
