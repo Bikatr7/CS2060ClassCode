@@ -129,3 +129,35 @@ void getRatings(int rentalSurvey[][NUM_CATEGORIES], int numRenters, int numCateg
         }
     }
 }
+
+//----------------------start-of-printSurveyResults()----------------------
+
+void printSurveyResults(int rentalSurvey[][NUM_CATEGORIES], int numRenters, int numCategories) 
+{
+    /*
+    * 
+    * Print the survey results.
+    * 
+    * Parameters:
+    * int rentalSurvey[][NUM_CATEGORIES]: The 2darray of ratings for each renter.
+    * int numRenters: The total number of renters.
+    * int numCategories: The total number of categories.
+    * 
+    * Returns:
+    * void.
+    * 
+    */
+
+    for (int i = 0; i < numRenters; ++i) 
+    {
+        printf("Survey %d:\t", i + 1);
+
+        for (int ii = 0; ii < numCategories; ++ii) 
+        {
+            printf("\t%d\t", rentalSurvey[i][ii]);
+
+        }
+
+        printf("\n");
+    }
+}
