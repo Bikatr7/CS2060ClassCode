@@ -21,7 +21,6 @@ int main()
 
 int getValidInt(int min, int max)
 {
-
     /*
     *
     * Gets a valid integer from the user.
@@ -72,7 +71,6 @@ int getValidInt(int min, int max)
 
 void printCategories(const char* categories[], size_t totalCategories) 
 {
-
     /*
     * 
     * Print the categories for the survey.
@@ -100,7 +98,6 @@ void printCategories(const char* categories[], size_t totalCategories)
 
 void getRatings(int rentalSurvey[][NUM_CATEGORIES], int numRenters, int numCategories) 
 {
-
     /*
     * 
     * Get the ratings for each renter.
@@ -191,4 +188,31 @@ void calculateCategoryAverages(int rentalSurvey[][NUM_CATEGORIES], float categor
 
         categoryAverages[ii] = (float)sum / numRenters;
     }
+}
+
+//----------------------start-of-printCategoryData()----------------------
+
+void printCategoryData(float categoryAverages[], int numCategories) 
+{
+    /*
+    * 
+    * Print the average rating for each category.
+    * 
+    * Parameters:
+    * float categoryAverages[]: The array of average ratings for each category.
+    * int numCategories: The total number of categories.
+    * 
+    * Returns:
+    * void.
+    * 
+    */
+
+    printf("Rating Averages:\t");
+
+    for (int ii = 0; ii < numCategories; ++ii) 
+    {
+        printf("\t%.1f\t", categoryAverages[ii]);
+    }
+
+    printf("\n");
 }
