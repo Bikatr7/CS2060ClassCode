@@ -1,3 +1,7 @@
+// Kaden Bilyeu
+// 9/24/2023
+// GE04
+
 #include <stdio.h>
 
 #define NUM_RENTERS 5
@@ -12,6 +16,15 @@ void printCategoryData(float categoryAverages[], int numCategories);
 
 int main()
 {
+    int rentalSurvey[NUM_RENTERS][NUM_CATEGORIES];
+    float categoryAverages[NUM_CATEGORIES];
+    const char* surveyCategories[NUM_CATEGORIES] = { "Check-in Process", "Cleanliness", "Amenities" };
+
+    printCategories(surveyCategories, NUM_CATEGORIES);
+    getRatings(rentalSurvey, NUM_RENTERS, NUM_CATEGORIES);
+    printSurveyResults(rentalSurvey, NUM_RENTERS, NUM_CATEGORIES);
+    calculateCategoryAverages(rentalSurvey, categoryAverages, NUM_RENTERS, NUM_CATEGORIES);
+    printCategoryData(categoryAverages, NUM_CATEGORIES);
 
 	return 0;
 
@@ -88,7 +101,7 @@ void printCategories(const char* categories[], size_t totalCategories)
 
     for (size_t i = 0; i < totalCategories; ++i) 
     {
-        printf("\t%zu.%s\t", i + 1, categories[i]);
+        printf("\t%-15s\t", categories[i]);
     }
 
     printf("\n");
@@ -151,8 +164,7 @@ void printSurveyResults(int rentalSurvey[][NUM_CATEGORIES], int numRenters, int 
 
         for (int ii = 0; ii < numCategories; ++ii) 
         {
-            printf("\t%d\t", rentalSurvey[i][ii]);
-
+            printf("\t%-15d\t", rentalSurvey[i][ii]);
         }
 
         printf("\n");
@@ -211,7 +223,7 @@ void printCategoryData(float categoryAverages[], int numCategories)
 
     for (int ii = 0; ii < numCategories; ++ii) 
     {
-        printf("\t%.1f\t", categoryAverages[ii]);
+        printf("%-20.1f\t", categoryAverages[ii]);
     }
 
     printf("\n");
