@@ -10,6 +10,12 @@ void modifyElement(int e);
 // function main begins program execution
 int main(void) {
    int a[SIZE] = {0, 1, 2, 3, 4}; // initialize array a
+   
+   // address of array itself
+   printf("Address of array name : %p\n", a);
+
+   // address of first element
+   printf("Address of first element : %p\n", &a[0]);
 
    puts("Effects of passing entire array by reference:\n\nThe "
       "values of the original array are:");
@@ -54,6 +60,27 @@ void modifyElement(int e) {
    printf("Value in modifyElement is %d\n", e);            
 } 
 
+//------------------start-of-displayArray()-------------------------
+
+void displayArray(int b[], size_t size) 
+
+    /*
+    * Prints an array.
+    * 
+    * Parameters:
+    * b[] - array to print.
+    * size - size of array.
+    * 
+    * Returns:
+    * None.
+    * 
+    */
+
+{
+   for (size_t i = 0; i < size; ++i) {
+	  printf("%3d", b[i]);
+   }
+}
 
 
 /**************************************************************************
