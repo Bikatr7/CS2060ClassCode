@@ -14,11 +14,14 @@ int main(void) {
 	
 	printf ("In main before cubePass1  numberMain = %d\n", numberMain);
 	printf("&numberMain = %p\n", &numberMain);
+
 	result = cubePass1(numberMain);
 	printf ("In main after cubePass1  numberMain = %d\n", numberMain);
 	printf ("Result = %d\n", result);
+
 	printf("\nIn main before cubePass2  numberMain = %d\n", numberMain);
 	result = cubePass2(&numberMain);
+
 	printf("\nIn main after cubePass2  numberMain = %d\n", numberMain);
 	printf("result = %d\n", result);
 
@@ -42,12 +45,20 @@ int cubePass2 (int * numberPtr)
 {
 	int cube = 0;
 	puts ("\nIn cubePass2");
+	// address of numberPtr
 	printf("numberPtr = %p\n", numberPtr);
+	// value of integer pointed to by numberPtr
 	printf ("*numberPtr = %d\n", *numberPtr);
+	// address of the pointer numberPtr
 	printf("&numberPtr = %p\n", &numberPtr);
+
+	// cube the value of the integer pointed to by numberPtr
 	cube = (* numberPtr )* (* numberPtr )* (* numberPtr); 
+
+	// set the value of the integer pointed to by numberPtr to cube
 	*numberPtr = cube;
 	printf ("*numberPtr = %d\n", *numberPtr);
+
 	return cube;
 } 
 
