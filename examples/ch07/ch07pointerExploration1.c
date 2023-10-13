@@ -40,7 +40,7 @@ int main ()
 
 	printf("2 * (*houseNumPtr) is %d\n\n", calcHouseNum2);
 
-	// shows that * and & precedence does not matter
+	// shows that dereferencing a pointer and then referencing it again is the same as the original pointer
 	printf("\n&*houseNumPtr = %p"
 		"\n*&houseNumPtr = %p\n", &*houseNumPtr, *&houseNumPtr);
 			
