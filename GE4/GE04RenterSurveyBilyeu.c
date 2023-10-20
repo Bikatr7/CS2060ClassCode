@@ -14,6 +14,7 @@ void printSurveyResults(int rentalSurvey[][NUM_CATEGORIES], int numRenters, int 
 void calculateCategoryAverages(int rentalSurvey[][NUM_CATEGORIES], float categoryAverages[], int numRenters, int numCategories);
 void printCategoryData(float categoryAverages[], int numCategories);
 
+
 int main()
 {
     int rentalSurvey[NUM_RENTERS][NUM_CATEGORIES];

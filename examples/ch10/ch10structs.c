@@ -30,8 +30,6 @@ int main(void)
 	struct employee defaultEmployee;
 	puts("\n\nPart 1 declare struct employee defaultEmployee");
 
-	char stringtest[6] = { '\0'};
-
 	puts("Print after declaration defaultEmployee\n");
 
 
@@ -174,12 +172,22 @@ void passStructByValue(struct employee employeeTest)
 
 void passStructByReference(struct employee* employeeTestPtr)
 {
-	puts("In function call - change values in the structure");
+	puts("In function call - read values from the user.");
 
-	strncpy(employeeTestPtr->firstName, "Dynamic", NAME_SIZE);
-	employeeTestPtr->hourlySalary = 100.00;
+	// by fgets
+	printf("Enter the employee's first name: ");
+	fgets(employeeTestPtr->firstName, NAME_SIZE, stdin);
+
+	printf("Enter the employee's last name: ");
+	fgets(employeeTestPtr->lastName, NAME_SIZE, stdin);
+	
+
+	// by scanf
+	printf("Enter the employee's hourly salary: ");
+	scanf("%lf", &employeeTestPtr->hourlySalary);
 
 	printf("Employee's first name = %s\n", employeeTestPtr->firstName);
+	printf("Employee's last name = %s\n", employeeTestPtr->lastName);
 	printf("Employee's hourly salary = %3.2f\n\n", employeeTestPtr->hourlySalary);
 }
 
