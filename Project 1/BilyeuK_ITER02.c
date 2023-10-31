@@ -131,7 +131,7 @@ int getValidInt(int min, int max, int sentinel)
         if (ch != '\n' && ch != EOF)
         {
             // Clear the rest of the buffer
-            while ((ch = getchar()) != '\n' && ch != EOF);
+            while ((ch = getchar()) != '\n');
         }
 
         // Check if the input is an integer
