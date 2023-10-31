@@ -53,8 +53,17 @@ void printNightsCharges(unsigned int nights, double charges);
 //--------------------start-of-Property------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 typedef struct
 {
-
-}Property;
+    int interval1;
+    int interval2;
+    int discount;
+    int rate;
+    int totalCharge;
+    int totalNights;
+    int totalRenters;
+    int reviews[VACATION_RENTERS][RENTER_SURVEY_CATEGORIES];
+    char locName[STRING_LENGTH];
+    char propName[STRING_LENGTH];
+} Property;
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
