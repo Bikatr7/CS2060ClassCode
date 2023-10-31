@@ -10,6 +10,7 @@
 #define LENGTH 20
 
 void  exploreValidateInt(const char* buff);
+void removeNewline(char* str);
 bool validateInt(char* buff, int* const validInt);
 void printLimits();
 
@@ -54,20 +55,36 @@ void printLimits()
 }
 
 
-void  exploreValidateInt(const char* buff)
+void removeNewline(char* str) 
 {
+	size_t len = strlen(str);
+
+	if (len > 0 && str[len - 1] == '\n') 
+	{
+		str[len - 1] = '\0';
+	}
+}
+
+
+void exploreValidateInt(const char* buff)
+{
+	char tempBuff[LENGTH];  
+	strncpy(tempBuff, buff, LENGTH);
+	removeNewline(tempBuff);
+
 	char* end;
 	errno = 0;
 	int validInt = 0;
-	long intTest = strtol(buff, &end, 10);
-	if (end == buff) {
-		fprintf(stderr, "%s: not a decimal number\n", buff);
+	long intTest = strtol(tempBuff, &end, 10);
+
+	if (end == tempBuff) {
+		fprintf(stderr, "%s: not a decimal number\n", tempBuff);
 	}
 	else if ('\0' != *end) {
-		fprintf(stderr, "%s: extra characters at end of input: %s\n", buff, end);
+		fprintf(stderr, "%s: extra characters at end of input: %s\n", tempBuff, end);
 	}
 	else if ((LONG_MIN == intTest || LONG_MAX == intTest) && ERANGE == errno) {
-		fprintf(stderr, "%s out of range of type long\n", buff);
+		fprintf(stderr, "%s out of range of type long\n", tempBuff);
 	}
 	else if (intTest > INT_MAX) {
 		fprintf(stderr, "%ld greater than INT_MAX\n", intTest);
