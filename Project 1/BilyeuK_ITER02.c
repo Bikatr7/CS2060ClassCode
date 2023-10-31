@@ -12,7 +12,26 @@
 #include <stdbool.h>
 #include <limits.h>
 
-#define LENGTH 100
+//Maximum length of a string
+#define  STRING_LENGTH 80
+
+//Two dimensional array storage amounts for rows and columns of surve data
+#define VACATION_RENTERS 5
+#define RENTER_SURVEY_CATEGORIES 3
+
+//Rental property login and sentinal values
+#define CORRECT_ID "id1"
+#define CORRECT_PASSCODE "ABCD"
+#define LOGIN_MAX_ATTEMPTS 3
+#define SENTINAL_NEG1 -1
+
+//rental property constant ranges
+#define MIN_RENTAL_NIGHTS 1
+#define MAX_RENTAL_NIGHTS 14
+#define MIN_RATE 1
+#define MAX_RATE 1000
+#define DISCOUNT_MULTIPLIER 2
+
 
 //Prints the rental property information.
 void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
@@ -26,6 +45,9 @@ bool scanInt(const char* stringPointer, int* value);
 // Calculates the charges for the rental property.
 double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
 
+// Calculate the average rating for each category.
+void calculateCategoryAverages(int rentalSurvey[VACATION_RENTERS][RENTER_SURVEY_CATEGORIES], double categoryAverages[], size_t numRenters, size_t numCategories);
+
 // Prints the number of nights and the charges for the rental property.
 void printNightsCharges(unsigned int nights, double charges);
 
@@ -35,11 +57,6 @@ void printNightsCharges(unsigned int nights, double charges);
 
 int main() 
 {
-
-    // constants
-    int const SENTINAL_NEG1 = -1;
-    int unsigned const MIN_RENTAL_NIGHTS = 1;
-    unsigned int const MAX_RENTAL_NIGHTS = 14;
     unsigned int const INTERVAL_1_NIGHTS = 3;
     unsigned int const INTERVAL_2_NIGHTS = 6;
     double const RENTAL_RATE = 400;
@@ -121,7 +138,7 @@ int getValidInt(int min, int max, int sentinel)
     * int: The valid integer the user entered.
     */
 
-    char inputStr[LENGTH];
+    char inputStr[STRING_LENGTH];
     int value;
 
     printf("Enter the number of nights you want to rent the property\n");
@@ -236,29 +253,27 @@ double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsig
     return totalCharge;
 }
 
-//----------------------start-of-calculateCategoryAverages()----------------------
+//----------------------start-of-calculateCategoryAverages())--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void calculateCategoryAverages(int rentalSurvey[][NUM_CATEGORIES], float categoryAverages[], int numRenters, int numCategories)
+void calculateCategoryAverages(int rentalSurvey[VACATION_RENTERS][RENTER_SURVEY_CATEGORIES], double categoryAverages[], size_t numRenters, size_t numCategories)
 {
     /*
     *
     * Calculate the average rating for each category.
     *
     * Parameters:
-    * int rentalSurvey[][NUM_CATEGORIES]: The 2darray of ratings for each renter.
-    * float categoryAverages[]: The array of average ratings for each category.
-    * int numRenters: The total number of renters.
-    * int numCategories: The total number of categories.
+    * int rentalSurvey[][RENTER_SURVEY_CATEGORIES]: The 2darray of ratings for each renter.
+    * double categoryAverages[]: The array of average ratings for each category.
+    * size_t numRenters: The total number of renters.
+    * size_t numCategories: The total number of categories.
     *
-    * Returns:
-    * void.
     */
 
-    for (int ii = 0; ii < numCategories; ++ii)
+    for (size_t ii = 0; ii < numCategories; ii++)
     {
         int sum = 0;
 
-        for (int i = 0; i < numRenters; ++i)
+        for (int i = 0; i < numRenters; i++)
         {
             sum += rentalSurvey[i][ii];
         }
@@ -279,9 +294,6 @@ void printNightsCharges(unsigned int nights, double charges)
     * Parameters:
     * nights (unsigned int): The number of nights the rental property is rented for.
     * charges (double): The total charge for the rental property.
-    * 
-    * Returns:
-    * None.
     * 
     * */
 
