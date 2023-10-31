@@ -32,7 +32,6 @@
 #define MAX_RATE 1000
 #define DISCOUNT_MULTIPLIER 2
 
-
 //Prints the rental property information.
 void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
 
@@ -51,7 +50,11 @@ void calculateCategoryAverages(int rentalSurvey[VACATION_RENTERS][RENTER_SURVEY_
 // Prints the number of nights and the charges for the rental property.
 void printNightsCharges(unsigned int nights, double charges);
 
-// I dunno how do document functions in C. So I'll just use docstrings.
+//--------------------start-of-Property------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+typedef struct
+{
+
+}Property;
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -147,7 +150,7 @@ int getValidInt(int min, int max, int sentinel)
     while (1)
     {
         // Get input as a string
-        fgets(inputStr, LENGTH, stdin);
+        fgets(inputStr, STRING_LENGTH, stdin);
 
         // Replace newline with null terminator
         char* newline = strchr(inputStr, '\n');
