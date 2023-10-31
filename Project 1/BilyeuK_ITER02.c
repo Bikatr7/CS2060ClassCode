@@ -6,12 +6,20 @@
 // Windows 10
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <stdbool.h>
+#include <limits.h>
 
 //Prints the rental property information.
 void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
 
-//Gets a valid integer from the user.
+// Gets a valid integer from the user.
 int getValidInt(int min, int max, int sentinel);
+
+// Properly scans an integer from a string.
+bool scanInt(const char* stringPointer, int* value);
 
 // Calculates the charges for the rental property.
 double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
@@ -149,6 +157,41 @@ int getValidInt(int min, int max, int sentinel)
             printf("Error: Not within %d and %d. Please enter the value again.\n", min, max);
         }
     }
+}
+
+//--------------------start-of-scanInt()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+bool scanInt(const char* stringPointer, int* value)
+{
+    /*
+    * 
+    * Properly scans an integer from a string.
+    * 
+    * Parameters:
+    * stringPointer (const char*): The string to scan the integer from.
+    * value (int*): The integer to store the scanned value in.
+    * 
+    * Returns:
+    * isValid (bool): Whether or not the integer was scanned successfully.
+    * 
+    * */
+
+    bool isValid = false;
+    char* end = NULL;
+
+    // Reset errno to detect overflow/underflow
+    errno = 0;
+
+    long intTest = strtol(stringPointer, &end, 10);
+
+    // Check if the conversion was successful and if there are no extra characters after the number
+    if (end != stringPointer && '\0' == *end && errno != ERANGE && intTest >= INT_MIN && intTest <= INT_MAX)
+    {
+        *value = (int)intTest;
+        isValid = true;
+    }
+
+    return isValid;
 }
 
 //--------------------start-of-calculateCharges()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
