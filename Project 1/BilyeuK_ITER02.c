@@ -236,6 +236,37 @@ double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsig
     return totalCharge;
 }
 
+//----------------------start-of-calculateCategoryAverages()----------------------
+
+void calculateCategoryAverages(int rentalSurvey[][NUM_CATEGORIES], float categoryAverages[], int numRenters, int numCategories)
+{
+    /*
+    *
+    * Calculate the average rating for each category.
+    *
+    * Parameters:
+    * int rentalSurvey[][NUM_CATEGORIES]: The 2darray of ratings for each renter.
+    * float categoryAverages[]: The array of average ratings for each category.
+    * int numRenters: The total number of renters.
+    * int numCategories: The total number of categories.
+    *
+    * Returns:
+    * void.
+    */
+
+    for (int ii = 0; ii < numCategories; ++ii)
+    {
+        int sum = 0;
+
+        for (int i = 0; i < numRenters; ++i)
+        {
+            sum += rentalSurvey[i][ii];
+        }
+
+        categoryAverages[ii] = (float)sum / numRenters;
+    }
+}
+
 //--------------------start-of-printNightsCharges()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void printNightsCharges(unsigned int nights, double charges) 
