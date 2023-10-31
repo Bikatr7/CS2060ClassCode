@@ -1,3 +1,10 @@
+// Kaden Bilyeu
+// 10-26-2023
+// Iteration 2
+// The goal of this program is to calculate the charges for a rental property. It offers features such as rental summary, etc
+// The code always aims to maintain proper and secure coding practices.
+// Windows 10
+
 #include <stdio.h>
 
 //Prints the rental property information.
