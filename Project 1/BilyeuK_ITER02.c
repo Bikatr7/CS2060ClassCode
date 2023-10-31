@@ -137,7 +137,7 @@ int getValidInt(int min, int max, int sentinel)
         // Check if the input is an integer
         if (result != 1)
         {
-            printf("Error: Not an integer number. Please enter the value again.\n");
+            puts("Error: Not an integer number. Please enter the value again.\n");
         }
         // check if input is within range or sentinel       
         else if ((nights >= min && nights <= max) || nights == sentinel)
