@@ -6,7 +6,7 @@ int main(void) {
    FILE *cfPtr = NULL; // cfPtr = clients.txt file pointer
 
    // fopen opens file; exits program if file cannot be opened 
-   if ((cfPtr = fopen("clients.txt", "r")) == NULL) {
+   if ((cfPtr = fopen("C:\\Users\\Tetra\\Documents\\Repositories\\CS2060ClassCode\\Files\\clients.txt", "r")) == NULL) {
       puts("File could not be opened");
    } 
    else { // read account, name and balance from file
