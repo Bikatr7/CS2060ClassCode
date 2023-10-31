@@ -12,6 +12,8 @@
 #include <stdbool.h>
 #include <limits.h>
 
+#define LENGTH 100
+
 //Prints the rental property information.
 void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
 
@@ -107,50 +109,45 @@ void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, uns
 
 //--------------------start-of-getValidInt()----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int getValidInt(int min, int max, int sentinel) 
+int getValidInt(int min, int max, int sentinel)
 {
-
     /*
-    * 
     * Gets a valid integer from the user.
-    * 
     * Parameters:
     * min (int): The minimum value the user can enter.
     * max (int): The maximum value the user can enter.
     * sentinel (int): The value that will end the loop.
-    * 
     * Returns:
     * int: The valid integer the user entered.
-    * 
-	*/
+    */
 
-    int nights;
-    char ch;
+    char inputStr[LENGTH];
+    int value;
 
     printf("Enter the number of nights you want to rent the property\n");
 
     // Loop until valid input
     while (1)
     {
-        int result = scanf("%d", &nights);
+        // Get input as a string
+        fgets(inputStr, LENGTH, stdin);
 
-        // Check if there are any characters left in the buffer
-        ch = getchar();
-        if (ch != '\n' && ch != EOF)
+        // Replace newline with null terminator
+        char* newline = strchr(inputStr, '\n');
+        if (newline)
+            *newline = '\0';
+
+        // *Try* to parse the string to an integer using scanInt
+        bool result = scanInt(inputStr, &value);
+
+        // If parsing was successful and the number is within the valid range or it's the sentinel value
+        if (result && ((value >= min && value <= max) || value == sentinel))
         {
-            // Clear the rest of the buffer
-            while ((ch = getchar()) != '\n');
+            return value;
         }
-
-        // Check if the input is an integer
-        if (result != 1)
+        else if (!result)
         {
             puts("Error: Not an integer number. Please enter the value again.\n");
-        }
-        // check if input is within range or sentinel       
-        else if ((nights >= min && nights <= max) || nights == sentinel)
-        {
-            return nights;
         }
         else
         {
