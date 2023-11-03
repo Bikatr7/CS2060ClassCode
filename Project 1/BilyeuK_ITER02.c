@@ -32,6 +32,27 @@
 #define MAX_RATE 1000
 #define DISCOUNT_MULTIPLIER 2
 
+//--------------------start-of-Property------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+typedef struct
+{
+    int interval1;
+    int interval2;
+    int discount;
+    int rate;
+    int totalCharge;
+    int totalNights;
+    int totalRenters;
+    int reviews[VACATION_RENTERS][RENTER_SURVEY_CATEGORIES];
+    char locName[STRING_LENGTH];
+    char propName[STRING_LENGTH];
+} Property;
+
+//--------------------start-of-Function-Prototypes------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// Sets up the rental property.
+void setupProperty(Property* property);
+
 //Prints the rental property information.
 void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
 
@@ -50,20 +71,6 @@ void calculateCategoryAverages(int rentalSurvey[VACATION_RENTERS][RENTER_SURVEY_
 // Prints the number of nights and the charges for the rental property.
 void printNightsCharges(unsigned int nights, double charges);
 
-//--------------------start-of-Property------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-typedef struct
-{
-    int interval1;
-    int interval2;
-    int discount;
-    int rate;
-    int totalCharge;
-    int totalNights;
-    int totalRenters;
-    int reviews[VACATION_RENTERS][RENTER_SURVEY_CATEGORIES];
-    char locName[STRING_LENGTH];
-    char propName[STRING_LENGTH];
-} Property;
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -106,6 +113,53 @@ int main()
     }
 
     return 0;
+}
+
+//--------------------start-of-setupProperty()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void setupProperty(Property *property)
+{
+    /*
+    * 
+    * Sets up the rental property.
+    * 
+    * Parameters:
+    * property (Property*): The rental property to set up.
+    * 
+    * */
+
+    puts("Enter the number of nights until the first discount interval: ");
+    int interval1 = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
+
+    puts("Enter the number of nights until the second discount interval: ");
+    int interval2 = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
+    
+    puts("Enter the nightly rate : ");
+    int rate = getValidInt(MIN_RATE, MAX_RATE, SENTINAL_NEG1);
+
+    puts("Enter the discount rate: ");
+    int discount = getValidInt(MIN_RATE, MAX_RATE, SENTINAL_NEG1);
+
+    puts("Enter the location name: ");
+    char locName[STRING_LENGTH];
+    fgets(locName, STRING_LENGTH, stdin);
+
+    puts("Enter the property name: ");
+	char propName[STRING_LENGTH];
+	fgets(propName, STRING_LENGTH, stdin);
+
+	property->interval1 = interval1;
+	property->interval2 = interval2;
+	property->rate = rate;
+	property->discount = discount;
+	property->totalCharge = 0;
+	property->totalNights = 0;
+	property->totalRenters = 0;
+
+    // Use strcpy to copy the strings to the property properly
+	strcpy(property->locName, locName);
+	strcpy(property->propName, propName);
+
 }
 
 //--------------------start-of-printRentalPropertyInfo()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
