@@ -519,13 +519,16 @@ void getRatings(Property* property, int sentinel)
     * sentinel (int): The value that will end the loop.
     */
 
+    const int MIN_STARS = 1;
+    const int MAX_STARS = 5;
+
     for (int i = 0; i < property->totalRenters; ++i)
     {
         printf("Renter %d:\n", i + 1);
         for (int ii = 0; ii < property->numCategories; ++ii)
         {
             printf("Enter your rating for Category %d: ", ii + 1);
-            int rating = getValidInt(1, 5, sentinel);
+            int rating = getValidInt(MIN_STARS, MAX_STARS, sentinel);
             property->reviews[i][ii] = rating;
         }
     }
@@ -544,12 +547,12 @@ void printPropertyRatings(Property* property)
     *
     */
 
-    if (property->numRenters > 0)
+    if (property->totalRenters > 0)
     {
         puts("Survey Results\n");
         puts("Rating Categories:\t1.Check-in Process\t2.Cleanliness\t3.Amenities\n");
 
-        for (int i = 0; i < property->numRenters; i++)
+        for (int i = 0; i < property->totalRenters; i++)
         {
             printf("Survey %d:\t\t", i + 1);
             for (int ii = 0; ii < property->numCategories; ii++)
@@ -578,7 +581,7 @@ void printNightsCharges(unsigned int nights, int charges)
     * nights (unsigned int): The number of nights the rental property is rented for.
     * charges (int): The total charge for the rental property.
     * 
-    * */
+    */
 
     if(nights > 0)
 	{
@@ -606,13 +609,9 @@ void clearBufferAndFgets(char* str, int size)
     * str (char*): The string to store the user input in.
     * size (int): The size of the string.
     * 
-    * */
+    */
 
-    // fgets reads until newline or EOF
-    if (fgets(str, size, stdin) == NULL) 
-    {
-
-    }
+    fgets(str, size, stdin);
 
     // Remove any newline at the end
     char* newline = strchr(str, '\n');
