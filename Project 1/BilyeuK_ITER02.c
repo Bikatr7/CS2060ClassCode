@@ -1,9 +1,10 @@
 // Kaden Bilyeu
 // 10-26-2023
 // Iteration 2
-// The goal of this program is to calculate the charges for a rental property. It offers features such as rental summary, etc
+// The goal of this program is to calculate the charges for a rental property. It offers features such as rental property setup, rental property information, rental property ratings, and a summary report. The program also has a login feature for the rental property owner.
 // The code always aims to maintain proper and secure coding practices.
 // Windows 10
+// Visual Studio 2019
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,7 +60,7 @@ typedef struct
 //--------------------start-of-Function-Prototypes------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Sets up the rental property.
-void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel);
+void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel, int numCategories, int maxRenters);
 
 //Prints the rental property information.
 void printRentalPropertyInfo(Property* property);
@@ -71,7 +72,7 @@ int getValidInt(int min, int max, int sentinel);
 bool scanInt(const char* stringPointer, int* value);
 
 // Calculates the charges for the rental property.
-int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount);
+int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount, int multiplier);
 
 // Calculate the average rating for each category.
 void calculateCategoryAverages(Property* property);
@@ -89,7 +90,7 @@ void printNightsCharges(unsigned int nights, int charges);
 void printSummaryReport(Property* property);
 
 // Runs the rental mode.
-bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts);
+bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts, int multiplier);
 
 // Prints the rental property information.
 bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts);
@@ -108,9 +109,9 @@ int main()
     if (ownerMode(CORRECT_ID, CORRECT_PASSCODE, LOGIN_MAX_ATTEMPTS)) 
     {
 
-        setupProperty(&property, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1);
+        setupProperty(&property, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, RENTER_SURVEY_CATEGORIES, VACATION_RENTERS);
 
-        bool exitRentalMode = rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS);
+        bool exitRentalMode = rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS, DISCOUNT_MULTIPLIER);
 
         if(exitRentalMode)
             printSummaryReport(&property);
@@ -154,7 +155,7 @@ void printSummaryReport(Property* property)
 
 //--------------------start-of-setupProperty()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel)
+void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel, int numCategories, int maxRenters)
 {
 
     /*
@@ -168,6 +169,8 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     * minRate (int): The minimum rate the user can enter.
     * maxRate (int): The maximum rate the user can enter.
     * sentinel (int): The value that will end the loop.
+    * numCategories (int): The number of categories for the survey.
+    * maxRenters (int): The number of renters for the survey.
     * 
     */
 
@@ -193,13 +196,13 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     property->totalNights = 0;
     property->totalRenters = 0;
     property->numRenters = 0;
-    property->numCategories = RENTER_SURVEY_CATEGORIES;
+    property->numCategories = numCategories;
 
-    for (int i = 0; i < RENTER_SURVEY_CATEGORIES; ++i) 
+    for (int i = 0; i < numCategories; ++i) 
     {
         property->categoryAverages[i] = 0;
 
-        for (int ii = 0; ii < VACATION_RENTERS; ++ii) 
+        for (int ii = 0; ii < maxRenters; ++ii) 
         {
             property->reviews[ii][i] = 0;
         }
@@ -311,7 +314,7 @@ bool scanInt(const char* stringPointer, int* value)
 
 //--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts)
+bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts, int multiplier)
 {
 
     /*
@@ -327,6 +330,8 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
     * minRate (int): The minimum rate the user can enter.
     * maxRate (int): The maximum rate the user can enter.
     * sentinel (int): The value that will end the loop.
+    * maxAttempts (int): The maximum number of login attempts.
+    * multiplier (int): The multiplier for the discount.
     * 
     * Returns:
     * bool: Whether or not the user wants to exit rental mode.
@@ -334,7 +339,7 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
     */
 
     bool exitRentalMode = false;
-    int currNights = 0;
+    int currNights;
 
     do 
     {
@@ -345,22 +350,16 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
         printPropertyRatings(property);
 
         puts("Enter the number of nights you want to rent the property: ");
-        currNights += getValidInt(minNights, maxNights, SENTINAL_NEG1);
+        currNights = getValidInt(minNights, maxNights, sentinel);
         
         if (currNights == sentinel)
         {
+            exitRentalMode = ownerMode(correctUsername, correctPassword, maxAttempts);
 
-            bool result = ownerMode(correctUsername, correctPassword, maxAttempts);
-
-            if(result)
-            {
-                exitRentalMode = true;
-            }
-			
         }
         else
         {
-            property->totalCharge += calculateCharges(property->totalNights, property->interval1, property->interval2, property->rate, property->discount);
+            property->totalCharge += calculateCharges(property->totalNights, property->interval1, property->interval2, property->rate, property->discount, multiplier);
             property->totalRenters++;
             property->numRenters++;
 
@@ -371,7 +370,7 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
             getRatings(property, sentinel);
         }
     }
-    while (currNights != sentinel);
+    while (!exitRentalMode);
 
     return exitRentalMode;
     
@@ -431,7 +430,7 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
 
 //--------------------start-of-calculateCharges()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount) 
+int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount, int multiplier)
 {
 
     /*
@@ -444,11 +443,12 @@ int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned
     * interval2Nights (unsigned int): The number of nights in the second interval.
     * rate (int): The rate for the first interval.
     * discount (int): The discount for the second interval.
+    * multiplier (int): The multiplier for the discount.
     * 
     * Returns:
     * int: The total charge for the rental property.
     * 
-    * */
+    */
 
 
     int totalCharge = 0;
@@ -468,7 +468,7 @@ int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned
     // Interval 2
     else 
     {
-        totalCharge = (interval1Nights * rate) + ((interval2Nights - interval1Nights) * (rate - discount)) + ((nights - interval2Nights) * (rate - 2 * discount));
+        totalCharge = (interval1Nights * rate) + ((interval2Nights - interval1Nights) * (rate - discount)) + ((nights - interval2Nights) * (rate - multiplier * discount));
     }
 
     return totalCharge;
@@ -490,7 +490,7 @@ void calculateCategoryAverages(Property* property)
     for (size_t ii = 0; ii < property->numCategories; ii++)
     {
         int sum = 0;
-        for (int i = 0; i < property->totalRenters; i++)
+        for (size_t i = 0; i < property->totalRenters; i++)
         {
             sum += property->reviews[i][ii];
         }
@@ -522,10 +522,10 @@ void getRatings(Property* property, int sentinel)
     const int MIN_STARS = 1;
     const int MAX_STARS = 5;
 
-    for (int i = 0; i < property->totalRenters; ++i)
+    for (size_t i = 0; i < property->totalRenters; ++i)
     {
         printf("Renter %d:\n", i + 1);
-        for (int ii = 0; ii < property->numCategories; ++ii)
+        for (size_t ii = 0; ii < property->numCategories; ++ii)
         {
             printf("Enter your rating for Category %d: ", ii + 1);
             int rating = getValidInt(MIN_STARS, MAX_STARS, sentinel);
@@ -549,12 +549,12 @@ void printPropertyRatings(Property* property)
 
     if (property->totalRenters > 0)
     {
-        puts("Survey Results\n");
+        puts("Property Rating Results\n");
         puts("Rating Categories:\t1.Check-in Process\t2.Cleanliness\t3.Amenities\n");
 
         for (int i = 0; i < property->totalRenters; i++)
         {
-            printf("Survey %d:\t\t", i + 1);
+            printf("Rating %d:\t\t", i + 1);
             for (int ii = 0; ii < property->numCategories; ii++)
             {
                 printf("%d\t\t\t", property->reviews[i][ii]);
@@ -622,7 +622,6 @@ void clearBufferAndFgets(char* str, int size)
     else
     {
         // Clear the rest of the buffer until newline is found or EOF
-        int c;
-        while ((c = getchar()) != '\n') {}
+        while ((getchar()) != '\n') {}
     }
 }
