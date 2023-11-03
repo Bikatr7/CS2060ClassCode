@@ -54,7 +54,7 @@ typedef struct
 void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel);
 
 //Prints the rental property information.
-void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
+void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount);
 
 // Gets a valid integer from the user.
 int getValidInt(int min, int max, int sentinel);
@@ -63,13 +63,13 @@ int getValidInt(int min, int max, int sentinel);
 bool scanInt(const char* stringPointer, int* value);
 
 // Calculates the charges for the rental property.
-double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
+int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount);
 
 // Calculate the average rating for each category.
-void calculateCategoryAverages(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], double categoryAverages[], size_t numRenters, size_t numCategories);
+void calculateCategoryAverages(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], int categoryAverages[], size_t numRenters, size_t numCategories);
 
 // Prints the number of nights and the charges for the rental property.
-void printNightsCharges(unsigned int nights, double charges);
+void printNightsCharges(unsigned int nights, int charges);
 
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -78,12 +78,12 @@ int main()
 {
     unsigned int const INTERVAL_1_NIGHTS = 3;
     unsigned int const INTERVAL_2_NIGHTS = 6;
-    double const RENTAL_RATE = 400;
-    double const DISCOUNT = 50;
+    int const RENTAL_RATE = 400;
+    int const DISCOUNT = 50;
 
     // normal vars
     unsigned int totalNightsRented = 0;
-    double totalCharges = 0;
+    int totalCharges = 0;
 
     while (1) 
     {
@@ -102,7 +102,7 @@ int main()
         }
 
         // Calculate the charges
-        double charges = calculateCharges(nights, INTERVAL_1_NIGHTS, INTERVAL_2_NIGHTS, RENTAL_RATE, DISCOUNT);
+        int charges = calculateCharges(nights, INTERVAL_1_NIGHTS, INTERVAL_2_NIGHTS, RENTAL_RATE, DISCOUNT);
 
         // Update total nights and charges
         totalNightsRented += nights;
@@ -164,7 +164,7 @@ void setupProperty(Property *property, int minNights, int maxNights, int minRate
 
 //--------------------start-of-printRentalPropertyInfo()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount) 
+void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount) 
 {
 
     /*
@@ -176,8 +176,8 @@ void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, uns
     * maxNights (unsigned int): The maximum number of nights the rental property can be rented for.
 	* interval1Nights (unsigned int): The number of nights in the first interval.
 	* interval2Nights (unsigned int): The number of nights in the second interval.
-	* rate (double): The rate for the first interval.
-	* discount (double): The discount for the second interval.
+	* rate (int): The rate for the first interval.
+	* discount (int): The discount for the second interval.
     *
     * Returns:
     * None.
@@ -276,7 +276,7 @@ bool scanInt(const char* stringPointer, int* value)
 
 //--------------------start-of-calculateCharges()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount) 
+int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount) 
 {
 
     /*
@@ -287,16 +287,16 @@ double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsig
     * nights (unsigned int): The number of nights the rental property is rented for.
     * interval1Nights (unsigned int): The number of nights in the first interval.
     * interval2Nights (unsigned int): The number of nights in the second interval.
-    * rate (double): The rate for the first interval.
-    * discount (double): The discount for the second interval.
+    * rate (int): The rate for the first interval.
+    * discount (int): The discount for the second interval.
     * 
     * Returns:
-    * double: The total charge for the rental property.
+    * int: The total charge for the rental property.
     * 
     * */
 
 
-    double totalCharge = 0;
+    int totalCharge = 0;
 
     // Interval 0
     if (nights <= interval1Nights) 
@@ -321,7 +321,7 @@ double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsig
 
 //----------------------start-of-calculateCategoryAverages())--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void calculateCategoryAverages(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], double categoryAverages[], size_t numRenters, size_t numCategories)
+void calculateCategoryAverages(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], int categoryAverages[], size_t numRenters, size_t numCategories)
 {
     /*
     *
@@ -329,7 +329,7 @@ void calculateCategoryAverages(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], dou
     *
     * Parameters:
     * int rentalSurvey[][]: The 2darray of ratings for each renter.
-    * double categoryAverages[]: The array of average ratings for each category.
+    * int categoryAverages[]: The array of average ratings for each category.
     * size_t numRenters: The total number of renters.
     * size_t numCategories: The total number of categories.
     *
@@ -350,7 +350,7 @@ void calculateCategoryAverages(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], dou
 
 //--------------------start-of-printNightsCharges()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void printNightsCharges(unsigned int nights, double charges) 
+void printNightsCharges(unsigned int nights, int charges) 
 {
 
     /*
@@ -359,7 +359,7 @@ void printNightsCharges(unsigned int nights, double charges)
     * 
     * Parameters:
     * nights (unsigned int): The number of nights the rental property is rented for.
-    * charges (double): The total charge for the rental property.
+    * charges (int): The total charge for the rental property.
     * 
     * */
 
