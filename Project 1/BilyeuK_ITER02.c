@@ -524,10 +524,10 @@ void getRatings(Property* property, int sentinel)
 
     for (size_t i = 0; i < property->totalRenters; ++i)
     {
-        printf("Renter %d:\n", i + 1);
+        printf("Renter %zu:\n", i + 1);
         for (size_t ii = 0; ii < property->numCategories; ++ii)
         {
-            printf("Enter your rating for Category %d: ", ii + 1);
+            printf("Enter your rating for Category %zu: ", ii + 1);
             int rating = getValidInt(MIN_STARS, MAX_STARS, sentinel);
             property->reviews[i][ii] = rating;
         }
@@ -552,10 +552,10 @@ void printPropertyRatings(Property* property)
         puts("Property Rating Results\n");
         puts("Rating Categories:\t1.Check-in Process\t2.Cleanliness\t3.Amenities\n");
 
-        for (int i = 0; i < property->totalRenters; i++)
+        for (size_t i = 0; i < property->totalRenters; i++)
         {
-            printf("Rating %d:\t\t", i + 1);
-            for (int ii = 0; ii < property->numCategories; ii++)
+            printf("Rating %zu:\t\t", i + 1);
+            for (size_t ii = 0; ii < property->numCategories; ii++)
             {
                 printf("%d\t\t\t", property->reviews[i][ii]);
             }
