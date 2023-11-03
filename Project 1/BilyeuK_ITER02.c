@@ -116,63 +116,27 @@ int main()
 {
     Property property;
 
-
     if (ownerMode(CORRECT_ID, CORRECT_PASSCODE, LOGIN_MAX_ATTEMPTS)) 
     {
-
         setupProperty(&property, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, RENTER_SURVEY_CATEGORIES, VACATION_RENTERS);
 
         bool exitRentalMode = rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS, DISCOUNT_MULTIPLIER);
 
         if(exitRentalMode)
             printSummaryReport(&property);
-       
     }
 
     return 0;
-
-}
-
-//--------------------start-of-printSummaryReport()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-void printSummaryReport(Property* property) 
-{
-    /*
-    * 
-    * Prints the rental property summary report.
-    * 
-    * Parameters:
-    * property (Property*): The rental property to print the summary report for.
-    * 
-    * */
-    
-    calculateCategoryAverages(property);
-
-    puts("Rental Property Report\n");
-    printf("Name: %s\n", property->propName);
-    printf("Location: %s\n\n", property->locName);
-
-    puts("Rental       Property       Totals\n");
-    puts("Renters      Nights        Charges\n");
-    printf("%-13d %-13d $%-13d\n\n", property->totalRenters, property->totalNights, property->totalCharge);
-
-    puts("Category Rating Averages\n");
-    printf("Check-in Process: %d\n", property->categoryAverages[0]);
-    printf("Cleanliness: %d\n", property->categoryAverages[1]);
-    printf("Amenities: %d\n", property->categoryAverages[2]);
-
-    puts("\nExiting AirUCCS\n");
 }
 
 //--------------------start-of-setupProperty()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel, int numCategories, int maxRenters)
 {
-
     /*
-    * 
+    *
     * Sets up the rental property.
-    * 
+    *
     * Parameters:
     * property (Property*): The rental property to set up.
     * minNights (int): The minimum number of nights the user can enter.
@@ -182,11 +146,11 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     * sentinel (int): The value that will end the loop.
     * numCategories (int): The number of categories for the survey.
     * maxRenters (int): The number of renters for the survey.
-    * 
+    *
     */
 
     puts("Enter the number of nights until the first discount interval: ");
-    property->interval1 = getValidInt(minNights, maxNights-1, sentinel);
+    property->interval1 = getValidInt(minNights, maxNights - 1, sentinel);
 
     puts("Enter the number of nights until the second discount interval: ");
     property->interval2 = getValidInt(property->interval1 + 1, maxNights, sentinel);
@@ -209,40 +173,45 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     property->numRenters = 0;
     property->numCategories = numCategories;
 
-    for (int i = 0; i < numCategories; ++i) 
+    for (int i = 0; i < numCategories; ++i)
     {
         property->categoryAverages[i] = 0;
 
-        for (int ii = 0; ii < maxRenters; ++ii) 
+        for (int ii = 0; ii < maxRenters; ++ii)
         {
             property->reviews[ii][i] = 0;
         }
     }
 }
 
+//--------------------start-of-clearBufferAndFgets()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-//--------------------start-of-printRentalPropertyInfo()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-void printRentalPropertyInfo(Property *property)
+void clearBufferAndFgets(char* str, int size)
 {
-	/*
-	* 
-	* Prints the rental property information.
-	* 
-	* Parameters:
-	* property (Property*): The rental property to print the information for.
-	* 
-	* */
 
-	puts("\nRental Property Information\n\n");
-	printf("Location Name: %s\n", property->locName);
-	printf("Property Name: %s\n", property->propName);
-	printf("First Interval: %d\n", property->interval1);
-	printf("Second Interval: %d\n", property->interval2);
-	printf("Rate: %d\n", property->rate);
-	printf("Discount: %d\n", property->discount);
-	puts("\n");
+    /*
+    *
+    * Clears the buffer and gets a string from the user.
+    *
+    * Parameters:
+    * str (char*): The string to store the user input in.
+    * size (int): The size of the string.
+    *
+    */
 
+    fgets(str, size, stdin);
+
+    // Remove any newline at the end
+    char* newline = strchr(str, '\n');
+    if (newline)
+    {
+        *newline = '\0';
+    }
+    else
+    {
+        // Clear the rest of the buffer until newline is found or EOF
+        while ((getchar()) != '\n') {}
+    }
 }
 
 //--------------------start-of-getValidInt()----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -251,12 +220,12 @@ int getValidInt(int min, int max, int sentinel)
 {
     /*
     * Gets a valid integer from the user.
-    * 
+    *
     * Parameters:
     * min (int): The minimum value the user can enter.
     * max (int): The maximum value the user can enter.
     * sentinel (int): The value that will end the loop.
-    * 
+    *
     * Returns:
     * value (int): The valid integer the user entered.
     */
@@ -293,16 +262,16 @@ int getValidInt(int min, int max, int sentinel)
 bool scanInt(const char* stringPointer, int* value)
 {
     /*
-    * 
+    *
     * Properly scans an integer from a string.
-    * 
+    *
     * Parameters:
     * stringPointer (const char*): The string to scan the integer from.
     * value (int*): The integer to store the scanned value in.
-    * 
+    *
     * Returns:
     * isValid (bool): Whether or not the integer was scanned successfully.
-    * 
+    *
     * */
 
     bool isValid = false;
@@ -323,11 +292,201 @@ bool scanInt(const char* stringPointer, int* value)
     return isValid;
 }
 
+//--------------------start-of-calculateCharges()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount, int multiplier)
+{
+    /*
+    *
+    * Calculates the charges for the rental property.
+    *
+    * Parameters:
+    * nights (unsigned int): The number of nights the rental property is rented for.
+    * interval1Nights (unsigned int): The number of nights in the first interval.
+    * interval2Nights (unsigned int): The number of nights in the second interval.
+    * rate (int): The rate for the first interval.
+    * discount (int): The discount for the second interval.
+    * multiplier (int): The multiplier for the discount.
+    *
+    * Returns:
+    * int: The total charge for the rental property.
+    *
+    */
+
+    int totalCharge = 0;
+
+    // Interval 0
+    if (nights <= interval1Nights)
+    {
+        totalCharge = nights * rate;
+    }
+
+    // Interval 1
+    else if (nights <= interval2Nights)
+    {
+        totalCharge = (interval1Nights * rate) + ((nights - interval1Nights) * (rate - discount));
+    }
+
+    // Interval 2
+    else
+    {
+        totalCharge = (interval1Nights * rate) + ((interval2Nights - interval1Nights) * (rate - discount)) + ((nights - interval2Nights) * (rate - multiplier * discount));
+    }
+
+    return totalCharge;
+}
+
+//----------------------start-of-calculateCategoryAverages())--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void calculateCategoryAverages(Property* property)
+{
+    /*
+    *
+    * Calculate the average rating for each category.
+    *
+    * Parameters:
+    * property (Property*): The rental property to calculate the averages for.
+    *
+    */
+
+    for (size_t ii = 0; ii < property->numCategories; ii++)
+    {
+        int sum = 0;
+        for (size_t i = 0; i < property->totalRenters; i++)
+        {
+            sum += property->reviews[i][ii];
+        }
+
+        if (property->totalRenters > 0)
+        {
+            property->categoryAverages[ii] = sum / property->totalRenters;
+        }
+        else
+        {
+            property->categoryAverages[ii] = 0;
+        }
+    }
+}
+
+//--------------------start-of-printRentalPropertyInfo()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void printRentalPropertyInfo(Property* property)
+{
+    /*
+    *
+    * Prints the rental property information.
+    *
+    * Parameters:
+    * property (Property*): The rental property to print the information for.
+    *
+    * */
+
+    puts("\nRental Property Information\n\n");
+    printf("Location Name: %s\n", property->locName);
+    printf("Property Name: %s\n", property->propName);
+    printf("First Interval: %d\n", property->interval1);
+    printf("Second Interval: %d\n", property->interval2);
+    printf("Rate: %d\n", property->rate);
+    printf("Discount: %d\n", property->discount);
+    puts("\n");
+}
+
+//----------------------start-of-printPropertyRatings()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void printPropertyRatings(Property* property)
+{
+    /*
+    *
+    * Prints the property ratings.
+    *
+    * Parameters:
+    * property (Property*): The rental property to print the ratings for.
+    *
+    */
+
+    if (property->totalRenters > 0)
+    {
+        puts("Property Rating Results\n");
+        puts("Rating Categories:\t1.Check-in Process\t2.Cleanliness\t3.Amenities\n");
+
+        for (size_t i = 0; i < property->totalRenters; i++)
+        {
+            printf("Rating %zu:\t\t", i + 1);
+            for (size_t ii = 0; ii < property->numCategories; ii++)
+            {
+                printf("%d\t\t\t", property->reviews[i][ii]);
+            }
+            puts("\n");
+        }
+    }
+    else
+    {
+        puts("No Ratings Currently\n");
+    }
+}
+
+//--------------------start-of-printNightsCharges()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void printNightsCharges(unsigned int nights, int charges)
+{
+
+    /*
+    *
+    * Prints the number of nights and the charges for the rental property.
+    *
+    * Parameters:
+    * nights (unsigned int): The number of nights the rental property is rented for.
+    * charges (int): The total charge for the rental property.
+    *
+    */
+
+    if (nights > 0)
+    {
+        puts("\nRental Charges\n\n");
+        puts("Nights          Charge\n");
+        printf("%-15u $%d\n\n", nights, charges);
+    }
+    else
+    {
+        puts("There were no rentals.\n");
+    }
+}
+
+//--------------------start-of-printSummaryReport()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void printSummaryReport(Property* property) 
+{
+    /*
+    * 
+    * Prints the rental property summary report.
+    * 
+    * Parameters:
+    * property (Property*): The rental property to print the summary report for.
+    * 
+    * */
+    
+    calculateCategoryAverages(property);
+
+    puts("Rental Property Report\n");
+    printf("Name: %s\n", property->propName);
+    printf("Location: %s\n\n", property->locName);
+
+    puts("Rental       Property       Totals\n");
+    puts("Renters      Nights        Charges\n");
+    printf("%-13d %-13d $%-13d\n\n", property->totalRenters, property->totalNights, property->totalCharge);
+
+    puts("Category Rating Averages\n");
+    printf("Check-in Process: %d\n", property->categoryAverages[0]);
+    printf("Cleanliness: %d\n", property->categoryAverages[1]);
+    printf("Amenities: %d\n", property->categoryAverages[2]);
+
+    puts("\nExiting AirUCCS\n");
+}
+
 //--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts, int multiplier)
 {
-
     /*
     * 
     * Runs the rental mode.
@@ -384,7 +543,6 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
     while (!exitRentalMode);
 
     return exitRentalMode;
-    
 }
 
 //--------------------start-of-ownerMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -439,84 +597,6 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
     return loginSuccess;
 }
 
-//--------------------start-of-calculateCharges()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount, int multiplier)
-{
-
-    /*
-    * 
-    * Calculates the charges for the rental property.
-    * 
-    * Parameters:
-    * nights (unsigned int): The number of nights the rental property is rented for.
-    * interval1Nights (unsigned int): The number of nights in the first interval.
-    * interval2Nights (unsigned int): The number of nights in the second interval.
-    * rate (int): The rate for the first interval.
-    * discount (int): The discount for the second interval.
-    * multiplier (int): The multiplier for the discount.
-    * 
-    * Returns:
-    * int: The total charge for the rental property.
-    * 
-    */
-
-
-    int totalCharge = 0;
-
-    // Interval 0
-    if (nights <= interval1Nights) 
-    {
-        totalCharge = nights * rate;
-    }
-
-    // Interval 1
-    else if (nights <= interval2Nights) 
-    {
-        totalCharge = (interval1Nights * rate) + ((nights - interval1Nights) * (rate - discount));
-    }
-
-    // Interval 2
-    else 
-    {
-        totalCharge = (interval1Nights * rate) + ((interval2Nights - interval1Nights) * (rate - discount)) + ((nights - interval2Nights) * (rate - multiplier * discount));
-    }
-
-    return totalCharge;
-}
-
-//----------------------start-of-calculateCategoryAverages())--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-void calculateCategoryAverages(Property* property)
-{
-    /*
-    * 
-    * Calculate the average rating for each category.
-    * 
-    * Parameters:
-    * property (Property*): The rental property to calculate the averages for.
-    * 
-    */
-
-    for (size_t ii = 0; ii < property->numCategories; ii++)
-    {
-        int sum = 0;
-        for (size_t i = 0; i < property->totalRenters; i++)
-        {
-            sum += property->reviews[i][ii];
-        }
-
-        if (property->totalRenters > 0)
-        {
-            property->categoryAverages[ii] = sum / property->totalRenters;
-        }
-        else
-        {
-			property->categoryAverages[ii] = 0;
-        }
-    }
-}
-
 //----------------------start-of-getRatings()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void getRatings(Property* property, int sentinel)
@@ -542,97 +622,5 @@ void getRatings(Property* property, int sentinel)
             int rating = getValidInt(MIN_STARS, MAX_STARS, sentinel);
             property->reviews[i][ii] = rating;
         }
-    }
-}
-
-//----------------------start-of-printPropertyRatings()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-void printPropertyRatings(Property* property)
-{
-    /*
-    *
-    * Prints the property ratings.
-    *
-    * Parameters:
-    * property (Property*): The rental property to print the ratings for.
-    *
-    */
-
-    if (property->totalRenters > 0)
-    {
-        puts("Property Rating Results\n");
-        puts("Rating Categories:\t1.Check-in Process\t2.Cleanliness\t3.Amenities\n");
-
-        for (size_t i = 0; i < property->totalRenters; i++)
-        {
-            printf("Rating %zu:\t\t", i + 1);
-            for (size_t ii = 0; ii < property->numCategories; ii++)
-            {
-                printf("%d\t\t\t", property->reviews[i][ii]);
-            }
-            puts("\n");
-        }
-    }
-    else
-    {
-        puts("No Ratings Currently\n");
-    }
-}
-
-//--------------------start-of-printNightsCharges()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-void printNightsCharges(unsigned int nights, int charges) 
-{
-
-    /*
-    *
-    * Prints the number of nights and the charges for the rental property.
-    * 
-    * Parameters:
-    * nights (unsigned int): The number of nights the rental property is rented for.
-    * charges (int): The total charge for the rental property.
-    * 
-    */
-
-    if(nights > 0)
-	{
-        puts("\nRental Charges\n\n");
-        puts("Nights          Charge\n");
-        printf("%-15u $%d\n\n", nights, charges);
-	}
-    else
-    {
-        puts("There were no rentals.\n");
-    }
-
-}
-
-//--------------------start-of-clearBufferAndFgets()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-void clearBufferAndFgets(char* str, int size) 
-{
-
-    /*
-    * 
-    * Clears the buffer and gets a string from the user.
-    * 
-    * Parameters:
-    * str (char*): The string to store the user input in.
-    * size (int): The size of the string.
-    * 
-    */
-
-    fgets(str, size, stdin);
-
-    // Remove any newline at the end
-    char* newline = strchr(str, '\n');
-    if (newline)
-    {
-        *newline = '\0';
-    }
-    else
-    {
-        // Clear the rest of the buffer until newline is found or EOF
-        while ((getchar()) != '\n') {}
     }
 }
