@@ -13,7 +13,7 @@
 #include <limits.h>
 
 //Maximum length of a string
-#define  STRING_LENGTH 80
+#define STRING_LENGTH 80
 
 //Two dimensional array storage amounts for rows and columns of surve data
 #define VACATION_RENTERS 5
@@ -51,7 +51,7 @@ typedef struct
 //--------------------start-of-Function-Prototypes------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Sets up the rental property.
-void setupProperty(Property* property);
+void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel);
 
 //Prints the rental property information.
 void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
@@ -66,7 +66,7 @@ bool scanInt(const char* stringPointer, int* value);
 double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, double rate, double discount);
 
 // Calculate the average rating for each category.
-void calculateCategoryAverages(int rentalSurvey[VACATION_RENTERS][RENTER_SURVEY_CATEGORIES], double categoryAverages[], size_t numRenters, size_t numCategories);
+void calculateCategoryAverages(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], double categoryAverages[], size_t numRenters, size_t numCategories);
 
 // Prints the number of nights and the charges for the rental property.
 void printNightsCharges(unsigned int nights, double charges);
@@ -117,7 +117,7 @@ int main()
 
 //--------------------start-of-setupProperty()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void setupProperty(Property *property)
+void setupProperty(Property *property, int minNights, int maxNights, int minRate, int maxRate, int sentinel)
 {
     /*
     * 
@@ -129,16 +129,16 @@ void setupProperty(Property *property)
     * */
 
     puts("Enter the number of nights until the first discount interval: ");
-    int interval1 = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
+    int interval1 = getValidInt(minNights, maxNights, sentinel);
 
     puts("Enter the number of nights until the second discount interval: ");
-    int interval2 = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
+    int interval2 = getValidInt(minNights, maxNights, sentinel);
     
     puts("Enter the nightly rate : ");
-    int rate = getValidInt(MIN_RATE, MAX_RATE, SENTINAL_NEG1);
+    int rate = getValidInt(minRate, maxRate, sentinel);
 
     puts("Enter the discount rate: ");
-    int discount = getValidInt(MIN_RATE, MAX_RATE, SENTINAL_NEG1);
+    int discount = getValidInt(minRate, rate, sentinel);
 
     puts("Enter the location name: ");
     char locName[STRING_LENGTH];
@@ -321,14 +321,14 @@ double calculateCharges(unsigned int nights, unsigned int interval1Nights, unsig
 
 //----------------------start-of-calculateCategoryAverages())--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void calculateCategoryAverages(int rentalSurvey[VACATION_RENTERS][RENTER_SURVEY_CATEGORIES], double categoryAverages[], size_t numRenters, size_t numCategories)
+void calculateCategoryAverages(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], double categoryAverages[], size_t numRenters, size_t numCategories)
 {
     /*
     *
     * Calculate the average rating for each category.
     *
     * Parameters:
-    * int rentalSurvey[][RENTER_SURVEY_CATEGORIES]: The 2darray of ratings for each renter.
+    * int rentalSurvey[][]: The 2darray of ratings for each renter.
     * double categoryAverages[]: The array of average ratings for each category.
     * size_t numRenters: The total number of renters.
     * size_t numCategories: The total number of categories.
@@ -363,13 +363,16 @@ void printNightsCharges(unsigned int nights, double charges)
     * 
     * */
 
-    if(nights <= 0)
+    if(nights > 0)
 	{
-		printf("There were no rentals.\n");
-		return;
+        printf("\nRental Charges\n\n");
+        printf("Nights          Charge\n");
+        printf("%-15u $%.2f\n\n", nights, charges);
 	}
+    else
+    {
+        printf("There were no rentals.\n");
+    }
 
-    printf("\nRental Charges\n\n");
-    printf("Nights          Charge\n");
-    printf("%-15u $%.2f\n\n", nights, charges);
 }
+
