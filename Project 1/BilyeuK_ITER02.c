@@ -269,7 +269,7 @@ bool scanInt(const char* stringPointer, int* value)
 
 //--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void rentalMode(Property* property, char correctUsername[], char correctPassword[])
+void rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel)
 {
 
     do 
@@ -284,8 +284,15 @@ void rentalMode(Property* property, char correctUsername[], char correctPassword
         {
             ownerMode(correctUsername, correctPassword);
         }
+        else
+        {
+            property->totalCharge += calculateCharges(property->totalNights, property->interval1, property->interval2, property->rate, property->discount);
+            property->totalRenters++;
+            getRatings(property, sentinel);
+        }
     }
     while (property->totalNights != SENTINAL_NEG1);
+    
 
 }
 
