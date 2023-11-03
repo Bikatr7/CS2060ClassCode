@@ -510,6 +510,7 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
 
     bool exitRentalMode = false;
     int currNights;
+    int currCharge;
 
     do 
     {
@@ -529,13 +530,15 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
         }
         else
         {
-            property->totalCharge += calculateCharges(property->totalNights, property->interval1, property->interval2, property->rate, property->discount, multiplier);
+            currCharge = calculateCharges(currNights, property->interval1, property->interval2, property->rate, property->discount, multiplier);
+
+            property->totalCharge += currCharge;
             property->totalRenters++;
             property->numRenters++;
 
             property->totalNights += currNights;
 
-            printNightsCharges(property->totalNights, property->totalCharge);
+            printNightsCharges(currNights, currCharge);
 
             getRatings(property, sentinel);
         }
@@ -613,14 +616,13 @@ void getRatings(Property* property, int sentinel)
     const int MIN_STARS = 1;
     const int MAX_STARS = 5;
 
-    for (size_t i = 0; i < property->totalRenters; ++i)
+    const char* categoryNames[RENTER_SURVEY_CATEGORIES] = { "Check-in Process", "Cleanliness", "Amenities" };
+
+    printf("Renter %d:\n", property->totalRenters);
+    for (size_t ii = 0; ii < property->numCategories; ++ii)
     {
-        printf("Renter %zu:\n", i + 1);
-        for (size_t ii = 0; ii < property->numCategories; ++ii)
-        {
-            printf("Enter your rating for Category %zu: ", ii + 1);
-            int rating = getValidInt(MIN_STARS, MAX_STARS, sentinel);
-            property->reviews[i][ii] = rating;
-        }
+        printf("Enter your rating for Category %zu (%s): ", ii + 1, categoryNames[ii]);
+        int rating = getValidInt(MIN_STARS, MAX_STARS, sentinel);
+        property->reviews[property->totalRenters-1][ii] = rating;
     }
 }
