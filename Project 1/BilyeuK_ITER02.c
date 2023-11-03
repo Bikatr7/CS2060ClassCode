@@ -86,7 +86,7 @@ void printPropertyRatings(Property* property);
 void printNightsCharges(unsigned int nights, int charges);
 
 // Prints the rental property information.
-bool ownerMode(char correctUsername[], char correctPassword[]);
+bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts);
 
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -269,11 +269,14 @@ bool scanInt(const char* stringPointer, int* value)
 
 //--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel)
+void rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts)
 {
 
     do 
     {
+        // reset number of renters
+        property->numRenters = 0;
+
         printRentalPropertyInfo(property);
         printPropertyRatings(property);
 
@@ -282,12 +285,26 @@ void rentalMode(Property* property, char correctUsername[], char correctPassword
         
         if (property->totalNights)
         {
-            ownerMode(correctUsername, correctPassword);
+            bool result = ownerMode(correctUsername, correctPassword, maxAttempts);
+
+            if(result)
+			{
+                setupProperty(property, minNights, maxNights, minRate, maxRate, sentinel);
+			}
+			else
+			{
+				exit(0);
+			}
+         
         }
         else
         {
             property->totalCharge += calculateCharges(property->totalNights, property->interval1, property->interval2, property->rate, property->discount);
             property->totalRenters++;
+            property->numRenters++;
+
+            printNightsCharges(property->totalNights, property->totalCharge);
+
             getRatings(property, sentinel);
         }
     }
@@ -298,9 +315,47 @@ void rentalMode(Property* property, char correctUsername[], char correctPassword
 
 //--------------------start-of-ownerMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool ownerMode(char correctUsername[], char correctPassword[])
+bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
 {
 
+    char username[STRING_LENGTH] = "";
+    char password[STRING_LENGTH] = "";
+
+    int attempts = 0;
+
+    do
+    {
+		puts("Enter your AirUCCS ID: ");
+		fgets(username, STRING_LENGTH, stdin);
+
+		puts("Enter your AirUCCS password: ");
+		fgets(password, STRING_LENGTH, stdin);
+
+		// Replace newline with null terminator
+		char* newline1 = strchr(username, '\n');
+		if (newline1)
+			*newline1 = '\0';
+
+		// Replace newline with null terminator
+		char* newline2 = strchr(password, '\n');
+		if (newline2)
+			*newline2 = '\0';
+
+		attempts++;
+
+    }
+    while(attempts < maxAttempts && strcmp(username, correctUsername) != 0 && strcmp(password, correctPassword) != 0);
+
+    if(attempts < maxAttempts)
+	{
+        puts("You have successfully logged in.\n");
+		return true;
+	}
+	else
+	{
+		puts("You have exceeded the maximum number of login attempts.\nExiting UCCS.");
+		return false;
+	}
 }
 
 //--------------------start-of-calculateCharges()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -410,14 +465,23 @@ void printPropertyRatings(Property* property)
     *
     */
 
+    bool hasRatings = false;
+
     for (int i = 0; i < property->totalRenters; ++i)
     {
+
         printf("Rating %d:\t", i + 1);
         for (int ii = 0; ii < property->numCategories; ++ii)
         {
             printf("\t%-15d\t", property->reviews[i][ii]);
+            hasRatings = true;
         }
         printf("\n");
+    }
+
+    if(hasRatings)
+    {
+        puts("No Ratings Currently");
     }
 }
 
