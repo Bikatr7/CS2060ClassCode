@@ -40,13 +40,20 @@ typedef struct
     int interval2;
     int discount;
     int rate;
+
     int totalCharge;
     int totalNights;
     int totalRenters;
+
+    int numCategories;
+    int numRenters;
+
     int reviews[VACATION_RENTERS][RENTER_SURVEY_CATEGORIES];
     int categoryAverages[RENTER_SURVEY_CATEGORIES];
+
     char locName[STRING_LENGTH];
     char propName[STRING_LENGTH];
+
 } Property;
 
 //--------------------start-of-Function-Prototypes------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -67,13 +74,13 @@ bool scanInt(const char* stringPointer, int* value);
 int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount);
 
 // Calculate the average rating for each category.
-void calculateCategoryAverages(Property* property, int numRenters, int numCategories);
+void calculateCategoryAverages(Property* property);
 
 // Get the ratings for each renter.
-void getRatings(Property* property, int numRenters, int numCategories, int sentinel);
+void getRatings(Property* property, int sentinel);
 
 // Print the survey results.
-void printSurveyResults(Property* property, int numRenters, int numCategories);
+void printPropertyRatings(Property* property);
 
 // Prints the number of nights and the charges for the rental property.
 void printNightsCharges(unsigned int nights, int charges);
@@ -250,7 +257,11 @@ void rentalMode(Property* property)
     do 
     {
         printRentalPropertyInfo(property);
+        printPropertyRatings(property);
 
+        puts("Enter the number of nights you want to rent the property: ");
+        property->totalNights = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
+        
     }
 
 }
@@ -302,7 +313,7 @@ int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned
 
 //----------------------start-of-calculateCategoryAverages())--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void calculateCategoryAverages(Property* property, int numRenters, int numCategories)
+void calculateCategoryAverages(Property* property)
 {
     /*
     * 
@@ -310,25 +321,23 @@ void calculateCategoryAverages(Property* property, int numRenters, int numCatego
     * 
     * Parameters:
     * property (Property*): The rental property to calculate the averages for.
-    * numRenters (int): The total number of renters.
-    * numCategories (int): The total number of categories.
     * 
     */
 
-    for (size_t ii = 0; ii < numCategories; ii++)
+    for (size_t ii = 0; ii < property->numCategories; ii++)
     {
         int sum = 0;
-        for (int i = 0; i < numRenters; i++)
+        for (int i = 0; i < property->totalRenters; i++)
         {
             sum += property->reviews[i][ii];
         }
-        property->categoryAverages[ii] = sum / numRenters;
+        property->categoryAverages[ii] = sum / property->totalRenters;
     }
 }
 
 //----------------------start-of-getRatings()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void getRatings(Property* property, int numRenters, int numCategories, int sentinel)
+void getRatings(Property* property, int sentinel)
 {
     /*
     *
@@ -336,15 +345,13 @@ void getRatings(Property* property, int numRenters, int numCategories, int senti
     *
     * Parameters:
     * property (Property*): The rental property to get the ratings for.
-    * numRenters (int): The total number of renters.
-    * numCategories (int): The total number of categories.
     * sentinel (int): The value that will end the loop.
     */
 
-    for (int i = 0; i < numRenters; ++i)
+    for (int i = 0; i < property->totalRenters; ++i)
     {
         printf("Renter %d:\n", i + 1);
-        for (int ii = 0; ii < numCategories; ++ii)
+        for (int ii = 0; ii < property->numCategories; ++ii)
         {
             printf("Enter your rating for Category %d: ", ii + 1);
             int rating = getValidInt(1, 5, sentinel);
@@ -353,25 +360,23 @@ void getRatings(Property* property, int numRenters, int numCategories, int senti
     }
 }
 
-//----------------------start-of-printSurveyResults()----------------------
+//----------------------start-of-printPropertyRatings()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void printSurveyResults(Property* property, int numRenters, int numCategories)
+void printPropertyRatings(Property* property)
 {
     /*
     *
-    * Print the survey results.
+    * Prints the property ratings.
     *
     * Parameters:
-    * property (Property*): The rental property to print the survey results for.
-    * numRenters (int): The total number of renters.
-    * numCategories (int): The total number of categories.
+    * property (Property*): The rental property to print the ratings for.
     *
     */
 
-    for (int i = 0; i < numRenters; ++i)
+    for (int i = 0; i < property->totalRenters; ++i)
     {
-        printf("Survey %d:\t", i + 1);
-        for (int ii = 0; ii < numCategories; ++ii)
+        printf("Rating %d:\t", i + 1);
+        for (int ii = 0; ii < property->numCategories; ++ii)
         {
             printf("\t%-15d\t", property->reviews[i][ii]);
         }
