@@ -85,6 +85,12 @@ void printPropertyRatings(Property* property);
 // Prints the number of nights and the charges for the rental property.
 void printNightsCharges(unsigned int nights, int charges);
 
+// placeholder for printSummaryReport
+void printSummaryReport(Property* property);
+
+// Runs the rental mode.
+void rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts);
+
 // Prints the rental property information.
 bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts);
 
@@ -93,8 +99,30 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts);
 
 int main() 
 {
+    Property property;
 
 
+    if (ownerMode(CORRECT_ID, CORRECT_PASSCODE, LOGIN_MAX_ATTEMPTS)) 
+    {
+
+        setupProperty(&property, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1);
+
+        rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS);
+
+        printSummaryReport(&property);
+    }
+    else 
+    {
+        printf("Exiting AirUCCS due to failed login attempts.\n");
+    }
+
+    return 0;
+
+}
+
+void printSummaryReport(Property* property) 
+{
+    printf("Summary Report placeholder.\n");
 }
 
 //--------------------start-of-setupProperty()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -283,7 +311,7 @@ void rentalMode(Property* property, char correctUsername[], char correctPassword
         puts("Enter the number of nights you want to rent the property: ");
         property->totalNights = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
         
-        if (property->totalNights)
+        if (property->totalNights == SENTINAL_NEG1)
         {
             bool result = ownerMode(correctUsername, correctPassword, maxAttempts);
 
@@ -317,45 +345,48 @@ void rentalMode(Property* property, char correctUsername[], char correctPassword
 
 bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
 {
-
     char username[STRING_LENGTH] = "";
     char password[STRING_LENGTH] = "";
+    bool loginSuccess = false; 
 
     int attempts = 0;
 
-    do
+    while (attempts < maxAttempts && !loginSuccess)
     {
-		puts("Enter your AirUCCS ID: ");
-		fgets(username, STRING_LENGTH, stdin);
+        puts("Enter your AirUCCS ID: ");
+        fgets(username, STRING_LENGTH, stdin);
 
-		puts("Enter your AirUCCS password: ");
-		fgets(password, STRING_LENGTH, stdin);
+        // Replace newline with null terminator
+        char* newline1 = strchr(username, '\n');
+        if (newline1)
+            *newline1 = '\0';
 
-		// Replace newline with null terminator
-		char* newline1 = strchr(username, '\n');
-		if (newline1)
-			*newline1 = '\0';
+        puts("Enter your AirUCCS password: ");
+        fgets(password, STRING_LENGTH, stdin);
 
-		// Replace newline with null terminator
-		char* newline2 = strchr(password, '\n');
-		if (newline2)
-			*newline2 = '\0';
+        // Replace newline with null terminator
+        char* newline2 = strchr(password, '\n');
+        if (newline2)
+            *newline2 = '\0';
 
-		attempts++;
-
+        if (strcmp(username, correctUsername) == 0 && strcmp(password, correctPassword) == 0)
+        {
+            puts("You have successfully logged in.\n");
+            loginSuccess = true;
+        }
+        else
+        {
+            puts("Incorrect ID or password. Please try again.\n");
+            attempts++;
+        }
     }
-    while(attempts < maxAttempts && strcmp(username, correctUsername) != 0 && strcmp(password, correctPassword) != 0);
 
-    if(attempts < maxAttempts)
-	{
-        puts("You have successfully logged in.\n");
-		return true;
-	}
-	else
-	{
-		puts("You have exceeded the maximum number of login attempts.\nExiting UCCS.");
-		return false;
-	}
+    if (!loginSuccess)
+    {
+        puts("You have exceeded the maximum number of login attempts.\nExiting AirUCCS.");
+    }
+
+    return loginSuccess;
 }
 
 //--------------------start-of-calculateCharges()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
