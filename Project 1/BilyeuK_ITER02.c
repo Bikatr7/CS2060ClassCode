@@ -85,6 +85,9 @@ void printPropertyRatings(Property* property);
 // Prints the number of nights and the charges for the rental property.
 void printNightsCharges(unsigned int nights, int charges);
 
+// Prints the rental property information.
+bool ownerMode(char correctUsername[], char correctPassword[]);
+
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -127,13 +130,28 @@ void setupProperty(Property *property, int minNights, int maxNights, int minRate
 	char propName[STRING_LENGTH];
 	fgets(propName, STRING_LENGTH, stdin);
 
+    // Replace newline with null terminator
+    char* newline1 = strchr(locName, '\n');
+    if (newline1)
+        *newline1 = '\0';
+
+    // Replace newline with null terminator
+    char* newline2 = strchr(propName, '\n');
+    if (newline2)
+        *newline2 = '\0';
+
 	property->interval1 = interval1;
 	property->interval2 = interval2;
 	property->rate = rate;
 	property->discount = discount;
+
 	property->totalCharge = 0;
 	property->totalNights = 0;
 	property->totalRenters = 0;
+
+    property->numRenters = 0;
+
+    property->numCategories = RENTER_SURVEY_CATEGORIES;
 
     // Use strcpy to copy the strings to the property properly
 	strcpy(property->locName, locName);
@@ -251,7 +269,7 @@ bool scanInt(const char* stringPointer, int* value)
 
 //--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void rentalMode(Property* property)
+void rentalMode(Property* property, char correctUsername[], char correctPassword[])
 {
 
     do 
@@ -262,7 +280,19 @@ void rentalMode(Property* property)
         puts("Enter the number of nights you want to rent the property: ");
         property->totalNights = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
         
+        if (property->totalNights)
+        {
+            ownerMode(correctUsername, correctPassword);
+        }
     }
+    while (property->totalNights != SENTINAL_NEG1);
+
+}
+
+//--------------------start-of-ownerMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+bool ownerMode(char correctUsername[], char correctPassword[])
+{
 
 }
 
