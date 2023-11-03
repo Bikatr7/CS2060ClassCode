@@ -54,7 +54,7 @@ typedef struct
 void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel);
 
 //Prints the rental property information.
-void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount);
+void printRentalPropertyInfo(Property* property);
 
 // Gets a valid integer from the user.
 int getValidInt(int min, int max, int sentinel);
@@ -76,43 +76,8 @@ void printNightsCharges(unsigned int nights, int charges);
 
 int main() 
 {
-    unsigned int const INTERVAL_1_NIGHTS = 3;
-    unsigned int const INTERVAL_2_NIGHTS = 6;
-    int const RENTAL_RATE = 400;
-    int const DISCOUNT = 50;
 
-    // normal vars
-    unsigned int totalNightsRented = 0;
-    int totalCharges = 0;
 
-    while (1) 
-    {
-        // Display the rental property information
-        printRentalPropertyInfo(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, INTERVAL_1_NIGHTS, INTERVAL_2_NIGHTS, RENTAL_RATE, DISCOUNT);
-
-        // Get the number of nights
-        int nights = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
-
-        // If user enters sentinel value, exit loop and print the total summary
-        if (nights == SENTINAL_NEG1) 
-        {
-            printf("Rental Property Owner Total Summary\n\n");
-            printNightsCharges(totalNightsRented, totalCharges);
-            break;
-        }
-
-        // Calculate the charges
-        int charges = calculateCharges(nights, INTERVAL_1_NIGHTS, INTERVAL_2_NIGHTS, RENTAL_RATE, DISCOUNT);
-
-        // Update total nights and charges
-        totalNightsRented += nights;
-        totalCharges += charges;
-
-        // Print the nights and charges for the current user
-        printNightsCharges(nights, charges);
-    }
-
-    return 0;
 }
 
 //--------------------start-of-setupProperty()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -164,30 +129,26 @@ void setupProperty(Property *property, int minNights, int maxNights, int minRate
 
 //--------------------start-of-printRentalPropertyInfo()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount) 
+void printRentalPropertyInfo(Property *property)
 {
+	/*
+	* 
+	* Prints the rental property information.
+	* 
+	* Parameters:
+	* property (Property*): The rental property to print the information for.
+	* 
+	* */
 
-    /*
-    *
-    * Prints the rental property information.
-    *
-    * Parameters:
-    * minNights (unsigned int): The minimum number of nights the rental property can be rented for.
-    * maxNights (unsigned int): The maximum number of nights the rental property can be rented for.
-	* interval1Nights (unsigned int): The number of nights in the first interval.
-	* interval2Nights (unsigned int): The number of nights in the second interval.
-	* rate (int): The rate for the first interval.
-	* discount (int): The discount for the second interval.
-    *
-    * Returns:
-    * None.
-    *
-    */
+	printf("\nRental Property Information\n\n");
+	printf("Location Name: %s\n", property->locName);
+	printf("Property Name: %s\n", property->propName);
+	printf("First Interval: %d\n", property->interval1);
+	printf("Second Interval: %d\n", property->interval2);
+	printf("Rate: %d\n", property->rate);
+	printf("Discount: %d\n", property->discount);
+	printf("\n");
 
-    printf("Rental Property can be rented for %u to %u nights.\n", minNights, maxNights);
-    printf("$%d rate a night for the first %u nights\n", rate, interval1Nights);
-    printf("$%d discount rate a night for nights %u to %u\n", discount, interval1Nights + 1, interval2Nights);
-    printf("$%d discount rate a night for each remaining night over %u.\n\n", 2 * discount, interval2Nights);
 }
 
 //--------------------start-of-getValidInt()----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -274,6 +235,19 @@ bool scanInt(const char* stringPointer, int* value)
     return isValid;
 }
 
+//--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void rentalMode(Property* property)
+{
+
+    do 
+    {
+        printRentalPropertyInfo(property);
+
+    }
+
+}
+
 //--------------------start-of-calculateCharges()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount) 
@@ -345,6 +319,71 @@ void calculateCategoryAverages(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], int
         }
 
         categoryAverages[ii] = (float)sum / numRenters;
+    }
+}
+
+
+//----------------------start-of-getRatings()----------------------
+
+void getRatings(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], int numRenters, int numCategories)
+{
+    /*
+    *
+    * Get the ratings for each renter.
+    *
+    * Parameters:
+    * int rentalSurvey[][NUM_CATEGORIES]: The 2darray of ratings for each renter.
+    * int numRenters: The total number of renters.
+    * int numCategories: The total number of categories.
+    *
+    * Returns:
+    * Void.
+    *
+    */
+
+    for (int i = 0; i < numRenters; ++i)
+    {
+        printf("Renter %d:\n", i + 1);
+
+        for (int ii = 0; ii < numCategories; ++ii)
+        {
+            printf("Enter your rating for Category %d: ", ii + 1);
+
+            int rating = getValidInt(1, 5);
+
+            rentalSurvey[i][ii] = rating;
+        }
+    }
+}
+
+//----------------------start-of-printSurveyResults()----------------------
+
+void printSurveyResults(int rentalSurvey[][RENTER_SURVEY_CATEGORIES], int numRenters, int numCategories)
+{
+    /*
+    *
+    * Print the survey results.
+    *
+    * Parameters:
+    * int rentalSurvey[][NUM_CATEGORIES]: The 2darray of ratings for each renter.
+    * int numRenters: The total number of renters.
+    * int numCategories: The total number of categories.
+    *
+    * Returns:
+    * void.
+    *
+    */
+
+    for (int i = 0; i < numRenters; ++i)
+    {
+        printf("Survey %d:\t", i + 1);
+
+        for (int ii = 0; ii < numCategories; ++ii)
+        {
+            printf("\t%-15d\t", rentalSurvey[i][ii]);
+        }
+
+        printf("\n");
     }
 }
 
