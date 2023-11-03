@@ -94,6 +94,9 @@ void rentalMode(Property* property, char correctUsername[], char correctPassword
 // Prints the rental property information.
 bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts);
 
+// Clears the buffer and gets a string from the user.
+void clearBufferAndFgets(char* str, int size);
+
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -120,9 +123,35 @@ int main()
 
 }
 
+//--------------------start-of-printSummaryReport()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 void printSummaryReport(Property* property) 
 {
-    printf("Summary Report placeholder.\n");
+    /*
+    * 
+    * Prints the rental property summary report.
+    * 
+    * Parameters:
+    * property (Property*): The rental property to print the summary report for.
+    * 
+    * */
+    
+    calculateCategoryAverages(property);
+
+    printf("Rental Property Report\n");
+    printf("Name: %s\n", property->propName);
+    printf("Location: %s\n\n", property->locName);
+
+    printf("Rental Property Totals\n");
+    printf("Renters      Nights        Charges\n");
+    printf("%-13d %-13d $%-13d\n\n", property->totalRenters, property->totalNights, property->totalCharge);
+
+    printf("Category Rating Averages\n");
+    printf("Check-in Process: %d\n", property->categoryAverages[0]);
+    printf("Cleanliness: %d\n", property->categoryAverages[1]);
+    printf("Amenities: %d\n", property->categoryAverages[2]);
+
+    printf("Exiting AirUCCS\n");
 }
 
 //--------------------start-of-setupProperty()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -153,24 +182,14 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     puts("Enter the nightly rate: ");
     property->rate = getValidInt(minRate, maxRate, sentinel);
 
-
     puts("Enter the discount rate: ");
     property->discount = getValidInt(minRate, property->rate - 1, sentinel);
 
-    // Prompt for rental property name without validation
     puts("Enter the rental property name: ");
-    fgets(property->propName, STRING_LENGTH, stdin);
-
-    char* newline = strchr(property->propName, '\n'); 
-    if (newline)
-        *newline = '\0'; 
-
+    clearBufferAndFgets(property->propName, STRING_LENGTH);
 
     puts("Enter the rental property location: ");
-    fgets(property->locName, STRING_LENGTH, stdin);
-    newline = strchr(property->locName, '\n');
-    if (newline)
-        *newline = '\0'; 
+    clearBufferAndFgets(property->locName, STRING_LENGTH);
 
     property->totalCharge = 0;
     property->totalNights = 0;
@@ -180,8 +199,8 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
 
     for (int i = 0; i < RENTER_SURVEY_CATEGORIES; ++i) {
         property->categoryAverages[i] = 0;
-        for (int j = 0; j < VACATION_RENTERS; ++j) {
-            property->reviews[j][i] = 0;
+        for (int ii = 0; ii < VACATION_RENTERS; ++ii) {
+            property->reviews[ii][i] = 0;
         }
     }
 }
@@ -217,10 +236,12 @@ int getValidInt(int min, int max, int sentinel)
 {
     /*
     * Gets a valid integer from the user.
+    * 
     * Parameters:
     * min (int): The minimum value the user can enter.
     * max (int): The maximum value the user can enter.
     * sentinel (int): The value that will end the loop.
+    * 
     * Returns:
     * int: The valid integer the user entered.
     */
@@ -228,18 +249,10 @@ int getValidInt(int min, int max, int sentinel)
     char inputStr[STRING_LENGTH];
     int value;
 
-    printf("Enter the number of nights you want to rent the property\n");
-
     // Loop until valid input
     while (1)
     {
-        // Get input as a string
-        fgets(inputStr, STRING_LENGTH, stdin);
-
-        // Replace newline with null terminator
-        char* newline = strchr(inputStr, '\n');
-        if (newline)
-            *newline = '\0';
+        clearBufferAndFgets(inputStr, STRING_LENGTH);
 
         // *Try* to parse the string to an integer using scanInt
         bool result = scanInt(inputStr, &value);
@@ -338,7 +351,6 @@ void rentalMode(Property* property, char correctUsername[], char correctPassword
     }
     while (property->totalNights != SENTINAL_NEG1);
     
-
 }
 
 //--------------------start-of-ownerMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -354,20 +366,10 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
     while (attempts < maxAttempts && !loginSuccess)
     {
         puts("Enter your AirUCCS ID: ");
-        fgets(username, STRING_LENGTH, stdin);
-
-        // Replace newline with null terminator
-        char* newline1 = strchr(username, '\n');
-        if (newline1)
-            *newline1 = '\0';
+        clearBufferAndFgets(username, STRING_LENGTH);
 
         puts("Enter your AirUCCS password: ");
-        fgets(password, STRING_LENGTH, stdin);
-
-        // Replace newline with null terminator
-        char* newline2 = strchr(password, '\n');
-        if (newline2)
-            *newline2 = '\0';
+        clearBufferAndFgets(password, STRING_LENGTH);
 
         if (strcmp(username, correctUsername) == 0 && strcmp(password, correctPassword) == 0)
         {
@@ -454,7 +456,15 @@ void calculateCategoryAverages(Property* property)
         {
             sum += property->reviews[i][ii];
         }
-        property->categoryAverages[ii] = sum / property->totalRenters;
+
+        if (property->totalRenters > 0)
+        {
+            property->categoryAverages[ii] = sum / property->totalRenters;
+        }
+        else
+        {
+			property->categoryAverages[ii] = 0;
+        }
     }
 }
 
@@ -496,23 +506,24 @@ void printPropertyRatings(Property* property)
     *
     */
 
-    bool hasRatings = false;
-
-    for (int i = 0; i < property->totalRenters; ++i)
+    if (property->numRenters > 0)
     {
+        printf("Survey Results\n");
+        printf("Rating Categories:\t1.Check-in Process\t2.Cleanliness\t3.Amenities\n");
 
-        printf("Rating %d:\t", i + 1);
-        for (int ii = 0; ii < property->numCategories; ++ii)
+        for (int i = 0; i < property->numRenters; i++)
         {
-            printf("\t%-15d\t", property->reviews[i][ii]);
-            hasRatings = true;
+            printf("Survey %d:\t\t", i + 1);
+            for (int ii = 0; ii < property->numCategories; ii++)
+            {
+                printf("%d\t\t\t", property->reviews[i][ii]);
+            }
+            printf("\n");
         }
-        printf("\n");
     }
-
-    if(hasRatings)
+    else
     {
-        puts("No Ratings Currently");
+        printf("No Ratings Currently\n");
     }
 }
 
@@ -544,3 +555,36 @@ void printNightsCharges(unsigned int nights, int charges)
 
 }
 
+//--------------------start-of-clearBufferAndFgets()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void clearBufferAndFgets(char* str, int size) 
+{
+
+    /*
+    * 
+    * Clears the buffer and gets a string from the user.
+    * 
+    * Parameters:
+    * str (char*): The string to store the user input in.
+    * size (int): The size of the string.
+    * 
+    * */
+
+    // fgets reads until newline or EOF
+    if (fgets(str, size, stdin) == NULL) {
+        // Handle error or EOF if you need to
+    }
+
+    // Remove any newline at the end
+    char* newline = strchr(str, '\n');
+    if (newline)
+    {
+        *newline = '\0'; // Replace newline with null terminator
+    }
+    else
+    {
+        // Clear the rest of the buffer until newline is found or EOF
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {}
+    }
+}
