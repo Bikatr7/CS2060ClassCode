@@ -89,7 +89,7 @@ void printNightsCharges(unsigned int nights, int charges);
 void printSummaryReport(Property* property);
 
 // Runs the rental mode.
-void rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts);
+bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts);
 
 // Prints the rental property information.
 bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts);
@@ -110,13 +110,11 @@ int main()
 
         setupProperty(&property, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1);
 
-        rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS);
+        bool exitRentalMode = rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS);
 
-        printSummaryReport(&property);
-    }
-    else 
-    {
-        printf("Exiting AirUCCS due to failed login attempts.\n");
+        if(exitRentalMode)
+            printSummaryReport(&property);
+       
     }
 
     return 0;
@@ -138,20 +136,20 @@ void printSummaryReport(Property* property)
     
     calculateCategoryAverages(property);
 
-    printf("Rental Property Report\n");
+    puts("Rental Property Report\n");
     printf("Name: %s\n", property->propName);
     printf("Location: %s\n\n", property->locName);
 
-    printf("Rental Property Totals\n");
-    printf("Renters      Nights        Charges\n");
+    puts("Rental       Property       Totals\n");
+    puts("Renters      Nights        Charges\n");
     printf("%-13d %-13d $%-13d\n\n", property->totalRenters, property->totalNights, property->totalCharge);
 
-    printf("Category Rating Averages\n");
+    puts("Category Rating Averages\n");
     printf("Check-in Process: %d\n", property->categoryAverages[0]);
     printf("Cleanliness: %d\n", property->categoryAverages[1]);
     printf("Amenities: %d\n", property->categoryAverages[2]);
 
-    printf("Exiting AirUCCS\n");
+    puts("\nExiting AirUCCS\n");
 }
 
 //--------------------start-of-setupProperty()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -310,8 +308,10 @@ bool scanInt(const char* stringPointer, int* value)
 
 //--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts)
+bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts)
 {
+
+    bool exitRentalMode = false;
 
     do 
     {
@@ -329,13 +329,11 @@ void rentalMode(Property* property, char correctUsername[], char correctPassword
             bool result = ownerMode(correctUsername, correctPassword, maxAttempts);
 
             if(result)
-			{
-                setupProperty(property, minNights, maxNights, minRate, maxRate, sentinel);
-			}
-			else
-			{
-				exit(0);
-			}
+            {
+                exitRentalMode = true;
+            }
+			
+
          
         }
         else
@@ -350,6 +348,8 @@ void rentalMode(Property* property, char correctUsername[], char correctPassword
         }
     }
     while (property->totalNights != SENTINAL_NEG1);
+
+    return exitRentalMode;
     
 }
 
