@@ -416,6 +416,7 @@ void printPropertyRatings(Property* property)
             {
                 printf("%d\t\t\t", property->reviews[i][ii]);
             }
+
             puts("\n");
         }
     }
@@ -471,7 +472,7 @@ void printSummaryReport(Property* property)
     printf("Name: %s\n", property->propName);
     printf("Location: %s\n\n", property->locName);
 
-    puts("Rental       Property       Totals\n");
+    puts("Rental Property Totals\n");
     puts("Renters      Nights        Charges\n");
     printf("%-13d %-13d $%-13d\n\n", property->totalRenters, property->totalNights, property->totalCharge);
 
@@ -520,7 +521,7 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
         printRentalPropertyInfo(property);
         printPropertyRatings(property);
 
-        puts("Enter the number of nights you want to rent the property: ");
+        puts("\n\nEnter the number of nights you want to rent the property: ");
         currNights = getValidInt(minNights, maxNights, sentinel);
         
         if (currNights == sentinel)
