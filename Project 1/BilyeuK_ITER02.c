@@ -195,9 +195,12 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     property->numRenters = 0;
     property->numCategories = RENTER_SURVEY_CATEGORIES;
 
-    for (int i = 0; i < RENTER_SURVEY_CATEGORIES; ++i) {
+    for (int i = 0; i < RENTER_SURVEY_CATEGORIES; ++i) 
+    {
         property->categoryAverages[i] = 0;
-        for (int ii = 0; ii < VACATION_RENTERS; ++ii) {
+
+        for (int ii = 0; ii < VACATION_RENTERS; ++ii) 
+        {
             property->reviews[ii][i] = 0;
         }
     }
@@ -217,14 +220,14 @@ void printRentalPropertyInfo(Property *property)
 	* 
 	* */
 
-	printf("\nRental Property Information\n\n");
+	puts("\nRental Property Information\n\n");
 	printf("Location Name: %s\n", property->locName);
 	printf("Property Name: %s\n", property->propName);
 	printf("First Interval: %d\n", property->interval1);
 	printf("Second Interval: %d\n", property->interval2);
 	printf("Rate: %d\n", property->rate);
 	printf("Discount: %d\n", property->discount);
-	printf("\n");
+	puts("\n");
 
 }
 
@@ -241,7 +244,7 @@ int getValidInt(int min, int max, int sentinel)
     * sentinel (int): The value that will end the loop.
     * 
     * Returns:
-    * int: The valid integer the user entered.
+    * value (int): The valid integer the user entered.
     */
 
     char inputStr[STRING_LENGTH];
@@ -311,7 +314,27 @@ bool scanInt(const char* stringPointer, int* value)
 bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts)
 {
 
+    /*
+    * 
+    * Runs the rental mode.
+    * 
+    * Parameters:
+    * property (Property*): The rental property to run the rental mode for.
+    * correctUsername (char[]): The correct username for the rental property.
+    * correctPassword (char[]): The correct password for the rental property.
+    * minNights (int): The minimum number of nights the user can enter.
+    * maxNights (int): The maximum number of nights the user can enter.
+    * minRate (int): The minimum rate the user can enter.
+    * maxRate (int): The maximum rate the user can enter.
+    * sentinel (int): The value that will end the loop.
+    * 
+    * Returns:
+    * bool: Whether or not the user wants to exit rental mode.
+    * 
+    */
+
     bool exitRentalMode = false;
+    int currNights = 0;
 
     do 
     {
@@ -322,10 +345,11 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
         printPropertyRatings(property);
 
         puts("Enter the number of nights you want to rent the property: ");
-        property->totalNights = getValidInt(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, SENTINAL_NEG1);
+        currNights += getValidInt(minNights, maxNights, SENTINAL_NEG1);
         
-        if (property->totalNights == SENTINAL_NEG1)
+        if (currNights == sentinel)
         {
+
             bool result = ownerMode(correctUsername, correctPassword, maxAttempts);
 
             if(result)
@@ -333,8 +357,6 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
                 exitRentalMode = true;
             }
 			
-
-         
         }
         else
         {
@@ -342,12 +364,14 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
             property->totalRenters++;
             property->numRenters++;
 
+            property->totalNights += currNights;
+
             printNightsCharges(property->totalNights, property->totalCharge);
 
             getRatings(property, sentinel);
         }
     }
-    while (property->totalNights != SENTINAL_NEG1);
+    while (currNights != sentinel);
 
     return exitRentalMode;
     
@@ -357,6 +381,20 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
 
 bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
 {
+    /*
+    * 
+    * Runs the owner mode.
+    * 
+    * Parameters:
+    * correctUsername (char[]): The correct username for the rental property.
+    * correctPassword (char[]): The correct password for the rental property.
+    * maxAttempts (int): The maximum number of login attempts.
+    * 
+    * Returns:
+    * loginSuccess (bool): Whether or not the user successfully logged in.
+    * 
+    */
+
     char username[STRING_LENGTH] = "";
     char password[STRING_LENGTH] = "";
     bool loginSuccess = false; 
@@ -371,7 +409,7 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
         puts("Enter your AirUCCS password: ");
         clearBufferAndFgets(password, STRING_LENGTH);
 
-        if (strcmp(username, correctUsername) == 0 && strcmp(password, correctPassword) == 0)
+        if(strcmp(username, correctUsername) == 0 && strcmp(password, correctPassword) == 0)
         {
             puts("You have successfully logged in.\n");
             loginSuccess = true;
@@ -383,7 +421,7 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
         }
     }
 
-    if (!loginSuccess)
+    if(!loginSuccess)
     {
         puts("You have exceeded the maximum number of login attempts.\nExiting AirUCCS.");
     }
@@ -508,8 +546,8 @@ void printPropertyRatings(Property* property)
 
     if (property->numRenters > 0)
     {
-        printf("Survey Results\n");
-        printf("Rating Categories:\t1.Check-in Process\t2.Cleanliness\t3.Amenities\n");
+        puts("Survey Results\n");
+        puts("Rating Categories:\t1.Check-in Process\t2.Cleanliness\t3.Amenities\n");
 
         for (int i = 0; i < property->numRenters; i++)
         {
@@ -518,12 +556,12 @@ void printPropertyRatings(Property* property)
             {
                 printf("%d\t\t\t", property->reviews[i][ii]);
             }
-            printf("\n");
+            puts("\n");
         }
     }
     else
     {
-        printf("No Ratings Currently\n");
+        puts("No Ratings Currently\n");
     }
 }
 
@@ -544,13 +582,13 @@ void printNightsCharges(unsigned int nights, int charges)
 
     if(nights > 0)
 	{
-        printf("\nRental Charges\n\n");
-        printf("Nights          Charge\n");
+        puts("\nRental Charges\n\n");
+        puts("Nights          Charge\n");
         printf("%-15u $%d\n\n", nights, charges);
 	}
     else
     {
-        printf("There were no rentals.\n");
+        puts("There were no rentals.\n");
     }
 
 }
@@ -571,20 +609,21 @@ void clearBufferAndFgets(char* str, int size)
     * */
 
     // fgets reads until newline or EOF
-    if (fgets(str, size, stdin) == NULL) {
-        // Handle error or EOF if you need to
+    if (fgets(str, size, stdin) == NULL) 
+    {
+
     }
 
     // Remove any newline at the end
     char* newline = strchr(str, '\n');
     if (newline)
     {
-        *newline = '\0'; // Replace newline with null terminator
+        *newline = '\0';
     }
     else
     {
         // Clear the rest of the buffer until newline is found or EOF
         int c;
-        while ((c = getchar()) != '\n' && c != EOF) {}
+        while ((c = getchar()) != '\n') {}
     }
 }
