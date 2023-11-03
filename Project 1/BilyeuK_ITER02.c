@@ -127,65 +127,65 @@ void printSummaryReport(Property* property)
 
 //--------------------start-of-setupProperty()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void setupProperty(Property *property, int minNights, int maxNights, int minRate, int maxRate, int sentinel)
+void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel)
 {
+
     /*
     * 
     * Sets up the rental property.
     * 
     * Parameters:
     * property (Property*): The rental property to set up.
+    * minNights (int): The minimum number of nights the user can enter.
+    * maxNights (int): The maximum number of nights the user can enter.
+    * minRate (int): The minimum rate the user can enter.
+    * maxRate (int): The maximum rate the user can enter.
+    * sentinel (int): The value that will end the loop.
     * 
-    * */
+    */
 
     puts("Enter the number of nights until the first discount interval: ");
-    int interval1 = getValidInt(minNights, maxNights, sentinel);
+    property->interval1 = getValidInt(minNights, maxNights, sentinel);
 
     puts("Enter the number of nights until the second discount interval: ");
-    int interval2 = getValidInt(minNights, maxNights, sentinel);
-    
-    puts("Enter the nightly rate : ");
-    int rate = getValidInt(minRate, maxRate, sentinel);
+    property->interval2 = getValidInt(property->interval1 + 1, maxNights, sentinel);
+
+    puts("Enter the nightly rate: ");
+    property->rate = getValidInt(minRate, maxRate, sentinel);
+
 
     puts("Enter the discount rate: ");
-    int discount = getValidInt(minRate, rate, sentinel);
+    property->discount = getValidInt(minRate, property->rate - 1, sentinel);
 
-    puts("Enter the location name: ");
-    char locName[STRING_LENGTH];
-    fgets(locName, STRING_LENGTH, stdin);
+    // Prompt for rental property name without validation
+    puts("Enter the rental property name: ");
+    fgets(property->propName, STRING_LENGTH, stdin);
 
-    puts("Enter the property name: ");
-	char propName[STRING_LENGTH];
-	fgets(propName, STRING_LENGTH, stdin);
+    char* newline = strchr(property->propName, '\n'); 
+    if (newline)
+        *newline = '\0'; 
 
-    // Replace newline with null terminator
-    char* newline1 = strchr(locName, '\n');
-    if (newline1)
-        *newline1 = '\0';
 
-    // Replace newline with null terminator
-    char* newline2 = strchr(propName, '\n');
-    if (newline2)
-        *newline2 = '\0';
+    puts("Enter the rental property location: ");
+    fgets(property->locName, STRING_LENGTH, stdin);
+    newline = strchr(property->locName, '\n');
+    if (newline)
+        *newline = '\0'; 
 
-	property->interval1 = interval1;
-	property->interval2 = interval2;
-	property->rate = rate;
-	property->discount = discount;
-
-	property->totalCharge = 0;
-	property->totalNights = 0;
-	property->totalRenters = 0;
-
+    property->totalCharge = 0;
+    property->totalNights = 0;
+    property->totalRenters = 0;
     property->numRenters = 0;
-
     property->numCategories = RENTER_SURVEY_CATEGORIES;
 
-    // Use strcpy to copy the strings to the property properly
-	strcpy(property->locName, locName);
-	strcpy(property->propName, propName);
-
+    for (int i = 0; i < RENTER_SURVEY_CATEGORIES; ++i) {
+        property->categoryAverages[i] = 0;
+        for (int j = 0; j < VACATION_RENTERS; ++j) {
+            property->reviews[j][i] = 0;
+        }
+    }
 }
+
 
 //--------------------start-of-printRentalPropertyInfo()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
