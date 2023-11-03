@@ -172,7 +172,7 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     */
 
     puts("Enter the number of nights until the first discount interval: ");
-    property->interval1 = getValidInt(minNights, maxNights, sentinel);
+    property->interval1 = getValidInt(minNights, maxNights-1, sentinel);
 
     puts("Enter the number of nights until the second discount interval: ");
     property->interval2 = getValidInt(property->interval1 + 1, maxNights, sentinel);
