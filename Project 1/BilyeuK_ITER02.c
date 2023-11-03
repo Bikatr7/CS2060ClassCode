@@ -185,9 +185,9 @@ void printRentalPropertyInfo(unsigned int minNights, unsigned int maxNights, uns
     */
 
     printf("Rental Property can be rented for %u to %u nights.\n", minNights, maxNights);
-    printf("$%.2f rate a night for the first %u nights\n", rate, interval1Nights);
-    printf("$%.2f discount rate a night for nights %u to %u\n", discount, interval1Nights + 1, interval2Nights);
-    printf("$%.2f discount rate a night for each remaining night over %u.\n\n", 2 * discount, interval2Nights);
+    printf("$%d rate a night for the first %u nights\n", rate, interval1Nights);
+    printf("$%d discount rate a night for nights %u to %u\n", discount, interval1Nights + 1, interval2Nights);
+    printf("$%d discount rate a night for each remaining night over %u.\n\n", 2 * discount, interval2Nights);
 }
 
 //--------------------start-of-getValidInt()----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -367,7 +367,7 @@ void printNightsCharges(unsigned int nights, int charges)
 	{
         printf("\nRental Charges\n\n");
         printf("Nights          Charge\n");
-        printf("%-15u $%.2f\n\n", nights, charges);
+        printf("%-15u $%d\n\n", nights, charges);
 	}
     else
     {
