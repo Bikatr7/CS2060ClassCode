@@ -59,11 +59,15 @@ typedef struct
 
 //--------------------start-of-Function-Prototypes------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+//-------------------------Initialization-------------------------/
+
 // Sets up the rental property.
 void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel, int numCategories, int maxRenters);
 
-//Prints the rental property information.
-void printRentalPropertyInfo(Property* property);
+//-------------------------Input-And-Utility-------------------------/
+
+// Clears the buffer and gets a string from the user.
+void clearBufferAndFgets(char* str, int size);
 
 // Gets a valid integer from the user.
 int getValidInt(int min, int max, int sentinel);
@@ -71,14 +75,18 @@ int getValidInt(int min, int max, int sentinel);
 // Properly scans an integer from a string.
 bool scanInt(const char* stringPointer, int* value);
 
-// Calculates the charges for the rental property.
-int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount, int multiplier);
+//-------------------------Core-Calculation-------------------------/
 
 // Calculate the average rating for each category.
+int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned int interval2Nights, int rate, int discount, int multiplier);
+
+// Calculates the charges for the rental property.
 void calculateCategoryAverages(Property* property);
 
-// Get the ratings for each renter.
-void getRatings(Property* property, int sentinel);
+//-------------------------Data-Output-------------------------/
+
+//Prints the rental property information.
+void printRentalPropertyInfo(Property* property);
 
 // Print the survey results.
 void printPropertyRatings(Property* property);
@@ -86,8 +94,10 @@ void printPropertyRatings(Property* property);
 // Prints the number of nights and the charges for the rental property.
 void printNightsCharges(unsigned int nights, int charges);
 
-// placeholder for printSummaryReport
+// Prints the rental property summary report.
 void printSummaryReport(Property* property);
+
+//-------------------------Interactive-Modes-------------------------/
 
 // Runs the rental mode.
 bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts, int multiplier);
@@ -95,9 +105,10 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
 // Prints the rental property information.
 bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts);
 
-// Clears the buffer and gets a string from the user.
-void clearBufferAndFgets(char* str, int size);
+//-------------------------Data-Collection-------------------------/
 
+// Get the ratings for each renter.
+void getRatings(Property* property, int sentinel);
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
