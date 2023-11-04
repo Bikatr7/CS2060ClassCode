@@ -176,6 +176,7 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     property->numRenters = 0;
     property->numCategories = numCategories;
 
+    // Initialize the reviews and category averages to 0
     for (size_t i = 0; i < numCategories; ++i)
     {
         property->categoryAverages[i] = 0;
@@ -275,7 +276,7 @@ bool scanInt(const char* stringPointer, int* value)
     * Returns:
     * isValid (bool): Whether or not the integer was scanned successfully.
     *
-    * */
+    */
 
     bool isValid = false;
     char* end = NULL;
@@ -366,6 +367,7 @@ void calculateCategoryAverages(Property* property)
         }
         else
         {
+            // If there are no renters, set the average to 0
             property->categoryAverages[ii] = 0;
         }
     }
@@ -572,7 +574,7 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
             exitRentalMode = ownerMode(correctUsername, correctPassword, maxAttempts);
 
         }
-        else
+        else 
         {
             currCharge = calculateCharges(currNights, property->interval1, property->interval2, property->rate, property->discount, multiplier);
 
