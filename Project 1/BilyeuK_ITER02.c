@@ -83,6 +83,9 @@ int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned
 // Calculates the charges for the rental property.
 void calculateCategoryAverages(Property* property);
 
+// Calculate the average rating for each category.
+int calculateOverallSatisfaction(Property* property);
+
 //-------------------------Data-Output-------------------------/
 
 //Prints the rental property information.
@@ -173,11 +176,11 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     property->numRenters = 0;
     property->numCategories = numCategories;
 
-    for (int i = 0; i < numCategories; ++i)
+    for (size_t i = 0; i < numCategories; ++i)
     {
         property->categoryAverages[i] = 0;
 
-        for (int ii = 0; ii < maxRenters; ++ii)
+        for (size_t ii = 0; ii < maxRenters; ++ii)
         {
             property->reviews[ii][i] = 0;
         }
@@ -368,6 +371,36 @@ void calculateCategoryAverages(Property* property)
     }
 }
 
+//----------------------start-of-calculateOverallSatisfaction()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+int calculateOverallSatisfaction(Property* property)
+{
+    /*
+    * 
+    * Calculate the average rating for each category.
+    * 
+    * Parameters:
+    * property (Property*): The rental property to calculate the averages for.
+    * 
+    * Returns:
+    * total: The overall satisfaction for the rental property.
+    */
+
+    int total = 0;
+
+    for (size_t i = 0; i < property->numCategories; ++i)
+    {
+        total += property->categoryAverages[i];
+    }
+
+    if (property->numCategories > 0) 
+    {
+        total = total / property->numCategories;
+    }
+
+    return total;
+}
+
 //--------------------start-of-printRentalPropertyInfo()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void printRentalPropertyInfo(Property* property)
@@ -379,16 +412,17 @@ void printRentalPropertyInfo(Property* property)
     * Parameters:
     * property (Property*): The rental property to print the information for.
     *
-    * */
+    */
 
-    puts("\nRental Property Information\n\n");
-    printf("Location Name: %s\n", property->locName);
-    printf("Property Name: %s\n", property->propName);
-    printf("First Interval: %d\n", property->interval1);
-    printf("Second Interval: %d\n", property->interval2);
-    printf("Rate: %d\n", property->rate);
-    printf("Discount: %d\n", property->discount);
-    puts("\n");
+    puts("\n----------------------------------------");
+    puts("Rental Property Information");
+    puts("----------------------------------------");
+    printf("Location Name: %-15s\n", property->locName);
+    printf("Property Name: %-15s\n", property->propName);
+    printf("First Interval (nights for discount 1): %-2d\n", property->interval1);
+    printf("Second Interval (nights for discount 2): %-2d\n", property->interval2);
+    printf("Nightly Rate (before discount): $%-4d\n", property->rate);
+    printf("Discount Rate: $%-3d\n", property->discount);
 }
 
 //----------------------start-of-printPropertyRatings()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -404,33 +438,37 @@ void printPropertyRatings(Property* property)
     *
     */
 
+    puts("----------------------------------------");
+    puts("Property Rating Results");
+    puts("----------------------------------------");
+
     if (property->totalRenters > 0)
     {
-        puts("Property Rating Results\n");
-        puts("Rating Categories:\t1.Check-in Process\t2.Cleanliness\t3.Amenities\n");
+        puts("Rating Categories:\t1.Check-in Process\t2.Cleanliness\t\t3.Amenities");
 
         for (size_t i = 0; i < property->totalRenters; i++)
         {
-            printf("Rating %zu:\t\t", i + 1);
+            printf("Renter %zu Ratings:\t", i + 1);
             for (size_t ii = 0; ii < property->numCategories; ii++)
             {
                 printf("%d\t\t\t", property->reviews[i][ii]);
             }
-
-            puts("\n");
+            puts("");
         }
     }
     else
     {
-        puts("No Ratings Currently\n");
+        puts("No Ratings Currently");
     }
+
+    puts("----------------------------------------");
+
 }
 
 //--------------------start-of-printNightsCharges()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void printNightsCharges(unsigned int nights, int charges)
 {
-
     /*
     *
     * Prints the number of nights and the charges for the rental property.
@@ -464,24 +502,29 @@ void printSummaryReport(Property* property)
     * Parameters:
     * property (Property*): The rental property to print the summary report for.
     * 
-    * */
+    */
     
     calculateCategoryAverages(property);
 
-    puts("Rental Property Report\n");
+    puts("============================================================");
+    puts("                  Rental Property Report                    ");
+    puts("============================================================");
     printf("Name: %s\n", property->propName);
-    printf("Location: %s\n\n", property->locName);
-
-    puts("Rental Property Totals\n");
-    puts("Renters      Nights        Charges\n");
-    printf("%-13d %-13d $%-13d\n\n", property->totalRenters, property->totalNights, property->totalCharge);
-
-    puts("Category Rating Averages\n");
-    printf("Check-in Process: %d\n", property->categoryAverages[0]);
-    printf("Cleanliness: %d\n", property->categoryAverages[1]);
-    printf("Amenities: %d\n", property->categoryAverages[2]);
-
-    puts("\nExiting AirUCCS\n");
+    printf("Location: %s\n", property->locName);
+    puts("------------------------------------------------------------");
+    printf("Total Renters: %d\n", property->totalRenters);
+    printf("Total Nights Rented: %d\n", property->totalNights);
+    printf("Total Charges Collected: $%d\n", property->totalCharge);
+    puts("------------------------------------------------------------");
+    puts("Category Rating Averages:");
+    printf("1. Check-in Process: %d/5\n", property->categoryAverages[0]);
+    printf("2. Cleanliness: %d/5\n", property->categoryAverages[1]);
+    printf("3. Amenities: %d/5\n", property->categoryAverages[2]);
+    puts("------------------------------------------------------------");
+    printf("Overall Satisfaction: %d\n", calculateOverallSatisfaction(property));
+    puts("============================================================");
+    puts("Thank you for using AirUCCS. Have a great day!");
+    puts("============================================================\n");
 }
 
 //--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -521,7 +564,7 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
         printRentalPropertyInfo(property);
         printPropertyRatings(property);
 
-        puts("\n\nEnter the number of nights you want to rent the property: ");
+        puts("\nEnter the number of nights you want to rent the property: ");
         currNights = getValidInt(minNights, maxNights, sentinel);
         
         if (currNights == sentinel)
