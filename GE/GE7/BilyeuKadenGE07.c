@@ -83,6 +83,45 @@ int stringCompare(const char* s1, const char* s2)
 
 void insertPet(Pet** head, const char* name, int age) 
 {
+    /*
+    * 
+    * This function inserts a new pet into the list in alphabetical order.
+    * 
+    * Parameters:
+    * head (Pet**) : A pointer to the head of the list.
+    * name (const char*) : The name of the pet to insert.
+    * age (int) : The age of the pet to insert.
+    * 
+    */
+
+    // Try to allocate memory for new pet
+    Pet* newPet = (Pet*)malloc(sizeof(Pet));
+
+    // if allocation fails, bail out
+    if (newPet == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return;
+    }
+    //null-terminate
+    strncpy(newPet->name, name, 80);
+    newPet->name[79] = '\0';
+    
+    newPet->age = age;
+    newPet->next = NULL;
+
+    // Find insertion point
+    Pet** tracer = head;
+
+    // While not at the end of the list and the current name is less than the new name
+    while (*tracer != NULL && stringCompare((*tracer)->name, name) < 0) 
+    {
+        tracer = &(*tracer)->next;
+    }
+
+    // Insert new_pet into the list
+    newPet->next = *tracer;
+    *tracer = newPet;
 
 }
 
