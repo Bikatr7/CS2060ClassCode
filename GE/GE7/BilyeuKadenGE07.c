@@ -43,6 +43,39 @@ int main()
 int stringCompare(const char* s1, const char* s2) 
 {
 
+    /*
+    * 
+    * This function compares two strings regardless of case and returns an integer value based on the comparison.
+    * 
+    * Parameters:
+    * s1 (const char*) : The first string to compare.
+    * s2 (const char*) : The second string to compare.
+    * 
+    */
+
+    char s1_lower[80];
+    char s2_lower[80];
+
+    // null-terminate.
+    strncpy(s1_lower, s1, 80);
+    s1_lower[79] = '\0'; 
+
+    // null-terminate.
+    strncpy(s2_lower, s2, 80);
+    s2_lower[79] = '\0';
+
+    // Convert both strings to lowercase.
+    for (int i = 0; s1_lower[i]; i++) 
+    {
+        s1_lower[i] = tolower((unsigned char)s1_lower[i]);
+    }
+    for (int i = 0; s2_lower[i]; i++) 
+    {
+        s2_lower[i] = tolower((unsigned char)s2_lower[i]);
+    }
+
+    return strcmp(s1_lower, s2_lower);
+
 }
 
 //--------------------start-of-insertPet()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
