@@ -127,10 +127,30 @@ void insertPet(Pet** head, const char* name, int age)
 
 //--------------------start-of-displayPets()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
 void displayPets(const Pet* head) 
 {
+    /*
+    *
+    * This function displays the pets in the linked list.
+    *
+    * Parameters:
+    * head (const Pet*) : A pointer to the head of the list.
+    *
+    */
 
+    // Check if the list is empty
+    if (head == NULL)
+    {
+        printf("No pets in the list.\n");
+        return;
+    }
+
+    // Traverse the list and print the pets in da list.
+    while (head != NULL)
+    {
+        printf("Pet Name: %s, Pet Age: %d\n", head->name, head->age);
+        head = head->next; // Move to next node
+    }
 }
 
 //--------------------start-of-writePetsToFile()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
