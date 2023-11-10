@@ -18,12 +18,12 @@
 
 //Two dimensional array storage amounts for rows and columns of surve data
 #define VACATION_RENTERS 5
-#define RENTER_SURVEY_CATEGORIES 3
+#define RENTER_SURVEY_CATEGORIES 4
 
 //Rental property login and sentinal values
-#define CORRECT_ID "id1"
-#define CORRECT_PASSCODE "ABCD"
-#define LOGIN_MAX_ATTEMPTS 3
+#define CORRECT_ID "id"
+#define CORRECT_PASSCODE "ab"
+#define LOGIN_MAX_ATTEMPTS 2
 #define SENTINAL_NEG1 -1
 
 //rental property constant ranges
@@ -152,11 +152,16 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     *
     */
 
+    printf("Minimum number of nights: %d\n", minNights);
+    printf("Maximum number of nights: %d\n", maxNights);
+    printf("Minimum rate: $%d\n", minRate);
+    printf("Maximum rate: $%d\n", maxRate);
+
     puts("Enter the number of nights until the first discount interval: ");
-    property->interval1 = getValidInt(minNights, maxNights - 1, sentinel);
+    property->interval1 = getValidInt(minNights, maxNights, sentinel);
 
     puts("Enter the number of nights until the second discount interval: ");
-    property->interval2 = getValidInt(property->interval1 + 1, maxNights, sentinel);
+    property->interval2 = getValidInt(property->interval1, maxNights, sentinel);
 
     puts("Enter the nightly rate: ");
     property->rate = getValidInt(minRate, maxRate, sentinel);
@@ -662,7 +667,7 @@ void getRatings(Property* property, int sentinel)
     const int MIN_STARS = 1;
     const int MAX_STARS = 5;
 
-    const char* categoryNames[RENTER_SURVEY_CATEGORIES] = { "Check-in Process", "Cleanliness", "Amenities" };
+    const char* categoryNames[RENTER_SURVEY_CATEGORIES] = { "Check-in Process", "Cleanliness", "Amenities", "cat4"};
 
     printf("Renter %d:\n", property->totalRenters);
     for (size_t ii = 0; ii < property->numCategories; ++ii)
