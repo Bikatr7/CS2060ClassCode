@@ -14,6 +14,9 @@
 #include <limits.h>
 #include <ctype.h>
 
+// macros
+#define STRING_LENGTH 80
+
 //--------------------start-of-Pet------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 typedef struct Pet 
@@ -32,6 +35,8 @@ void writePetsToFile(const Pet* head, const char* filename);
 Pet* removePet(Pet** head, const char* name);
 void deallocatePets(Pet** head);
 void clearBufferAndFgets(char* str, int size);
+bool scanInt(const char* stringPointer, int* value);
+int getValidInt(int min, int max, int sentinel);
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -290,4 +295,82 @@ void clearBufferAndFgets(char* str, int size)
         // Clear the rest of the buffer until newline is found or EOF
         while ((getchar()) != '\n') {}
     }
+}
+
+//--------------------start-of-getValidInt()----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+int getValidInt(int min, int max, int sentinel)
+{
+    /*
+    * Gets a valid integer from the user.
+    *
+    * Parameters:
+    * min (int): The minimum value the user can enter.
+    * max (int): The maximum value the user can enter.
+    * sentinel (int): The value that will end the loop.
+    *
+    * Returns:
+    * value (int): The valid integer the user entered.
+    */
+
+    char inputStr[STRING_LENGTH];
+    int value;
+
+    // Loop until valid input
+    while (1)
+    {
+        clearBufferAndFgets(inputStr, STRING_LENGTH);
+
+        // *Try* to parse the string to an integer using scanInt
+        bool result = scanInt(inputStr, &value);
+
+        // If parsing was successful and the number is within the valid range or it's the sentinel value
+        if (result && ((value >= min && value <= max) || value == sentinel))
+        {
+            return value;
+        }
+        else if (!result)
+        {
+            puts("Error: Not an integer number. Please enter the value again.\n");
+        }
+        else
+        {
+            printf("Error: Not within %d and %d. Please enter the value again.\n", min, max);
+        }
+    }
+}
+
+//--------------------start-of-scanInt()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+bool scanInt(const char* stringPointer, int* value)
+{
+    /*
+    *
+    * Properly scans an integer from a string.
+    *
+    * Parameters:
+    * stringPointer (const char*): The string to scan the integer from.
+    * value (int*): The integer to store the scanned value in.
+    *
+    * Returns:
+    * isValid (bool): Whether or not the integer was scanned successfully.
+    *
+    */
+
+    bool isValid = false;
+    char* end = NULL;
+
+    // Reset errno to detect overflow/underflow
+    errno = 0;
+
+    long intTest = strtol(stringPointer, &end, 10);
+
+    // Check if the conversion was successful and if there are no extra characters after the number
+    if (end != stringPointer && '\0' == *end && errno != ERANGE && intTest >= INT_MIN && intTest <= INT_MAX)
+    {
+        *value = (int)intTest;
+        isValid = true;
+    }
+
+    return isValid;
 }
