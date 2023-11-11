@@ -84,7 +84,7 @@ int main()
             }
             else 
             {
-                puts("Pet not found.\n");
+                printf("%s was not found in the list\n", name);
             }
             break;
 
@@ -97,7 +97,7 @@ int main()
 
         }
 
-        puts("\n")
+        puts("\n");
 
     } while (choice != 5);
 
@@ -214,6 +214,8 @@ void displayPets(const Pet* head)
        puts("The list is empty");
        return;
     }
+
+    puts("\nThe pets in alphabetical order by name:");
 
     // Traverse the list and print the pets in da list.
     while (head != NULL)
@@ -395,7 +397,7 @@ int getValidInt(int min, int max, int sentinel)
         }
         else if (!result)
         {
-            puts("Error: Not an integer number. Please enter the value again.\n");
+            puts("Error: Not an integer number. Please enter the value again.");
         }
         else
         {
