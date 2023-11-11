@@ -34,6 +34,7 @@ void displayPets(const Pet* head);
 void writePetsToFile(const Pet* head, const char* filename);
 Pet* removePet(Pet** head, const char* name);
 void deallocatePets(Pet** head);
+char getChoice();
 
 // Helper function prototypes from other assignments
 void clearBufferAndFgets(char* str, int size);
@@ -45,42 +46,52 @@ int getValidInt(int min, int max);
 int main() 
 {
     Pet* head = NULL;
-    
+
     char filename[STRING_LENGTH];
     char name[STRING_LENGTH];
-    
-    int age;
-    int choice;
+    char choice;
 
+    int age;
+
+    bool isSafe;
+
+    // Insert pets loop
     do 
     {
-        // Display Menu
-        puts("1. Insert Pet\n2. Display Pets\n3. Remove Pet\n4. Write Pets to File\n5. Exit\n\nEnter your choice: ");
-        choice = getValidInt(1, 5);
+        puts("Enter pet name: ");
+        clearBufferAndFgets(name, sizeof(name));
 
-        switch (choice) 
+        puts("Enter pet age: ");
+
+        // Assuming 200 as a realistic maximum age for a pet... turtle right?
+        // I know validation is not required for this assignment, but I'm lazy and I already have this function written.
+        age = getValidInt(0, 200); 
+
+        insertPet(&head, name, age);
+
+        puts("\nDo you want to add another pet? Please enter (y)es or (n)o: ");
+
+        choice = getChoice();
+
+        puts("");
+
+    } while (tolower(choice) == 'y');
+
+    // Display all pets
+    displayPets(head);
+
+    puts("");
+
+    // Remove pets loop
+    do 
+    {
+        puts("Do you want to remove a pet from the list? Please enter (y)es or (n)o: ");
+
+        choice = getChoice();
+
+        if (tolower(choice) == 'y') 
         {
-        
-        // Insert Pet
-        case 1: 
-            puts("\nEnter pet name: ");
-            clearBufferAndFgets(name, sizeof(name));
-            puts("Enter pet age: ");
-
-            // Assuming 200 as a realistic maximum age for a pet... turtle right?
-            age = getValidInt(0, 200);
-
-            insertPet(&head, name, age);
-            break;
-
-        // Display Pets
-        case 2:
-            displayPets(head);
-            break;
-
-        // Remove Pet
-        case 3: 
-            puts("\nEnter pet name to remove: ");
+            puts("\nEnter the pet's name to delete: ");
             clearBufferAndFgets(name, sizeof(name));
 
             Pet* removedPet = removePet(&head, name);
@@ -93,56 +104,43 @@ int main()
             {
                 printf("%s was not found in the list\n", name);
             }
-            break;
+        }
+        displayPets(head);
 
-        // Write Pets to File
-        case 4: 
+    } while (tolower(choice) == 'y' && head != NULL); // Continue only if there are pets left
 
-            // if the list is empty, don't bother asking for a filename
-            if (head)
+    // If there are any pets left in the list, write them to a file
+    if (head != NULL) 
+    {
+        puts("\nEnter filename to save the remaining pets: ");
+        clearBufferAndFgets(filename, sizeof(filename));
+
+        isSafe = true;
+
+        // check if filename does not end with .txt
+        // I know this isn't required but it was an edge case I thought of and I wanted to handle it.
+        if (strcmp(filename + strlen(filename) - 4, ".txt") != 0) 
+        {
+            if (strlen(filename) + 4 > STRING_LENGTH) 
             {
-
-                puts("Enter filename: ");
-                clearBufferAndFgets(filename, sizeof(filename));
-
-                bool isSafe = true;
-
-                // check if filename does not end with .txt, not sure if testers will add that or not
-                if (strcmp(filename + strlen(filename) - 4, ".txt") != 0)
-                {
-                    // not really needed, but was an edge case I considered.
-                    if (strlen(filename) + 4 > STRING_LENGTH)
-                    {
-                        isSafe = false;
-                        puts("Filename too long, cannot add .txt extension");
-
-                    }
-                    else
-                    {
-                        strcat(filename, ".txt");
-                    }
-                }
-
-                if (isSafe)
-                    writePetsToFile(head, filename);
-
-                break;
+                isSafe = false;
+                puts("Filename too long, cannot add .txt extension\n");
             }
-            else
+            else 
             {
-                puts("The list is empty\n");
+                strcat(filename, ".txt");
             }
-
         }
 
-        puts("\n");
+        if (isSafe) 
+        {
+            writePetsToFile(head, filename);
+        }
+    }
 
-    } while (choice != 5);
-
-    puts("Exiting...\n");
-
-    // Clean-up
+    // kill the list
     deallocatePets(&head);
+    puts("Exiting...\n");
 
     return 0;
 }
@@ -474,4 +472,36 @@ bool scanInt(const char* stringPointer, int* value)
     }
 
     return isValid;
+}
+
+//--------------------start-of-getChoice()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+char getChoice()
+{
+	/*
+	*
+	* Gets a valid choice from the user.
+	*
+	* Returns:
+	* choice (char): The valid choice the user entered.
+	*
+	*/
+
+	char choice;
+
+	// Loop until valid input
+	while (1)
+	{
+		choice = getchar();
+		while (getchar() != '\n'); // Clear the input buffer
+
+		if (tolower(choice) == 'y' || tolower(choice) == 'n')
+		{
+			return choice;
+		}
+		else
+		{
+			puts("Error: Invalid choice. Please enter (y)es or (n)o.");
+		}
+	}
 }
