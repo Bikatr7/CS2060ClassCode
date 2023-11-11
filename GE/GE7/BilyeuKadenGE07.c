@@ -1,7 +1,7 @@
 // Kaden Bilyeu
 // 11-08-2023
 // Graded Exercise 07
-// *Insert Goal ig*
+// This program maintains a linked list of pets. The user can add pets to the list, remove pets from the list, display the pets in the list, and write the pets in the list to a file.
 // The code always aims to maintain proper and secure coding practices.
 // Windows 10
 // Visual Studio 2019
@@ -21,38 +21,42 @@
 
 typedef struct Pet 
 {
-    char name[80];
+    char name[STRING_LENGTH];
     int age;
     struct Pet* next;
 
 } Pet;
 
-// Function prototypes Tenative
+// Function prototypes unique to this assignment
 int stringCompare(const char* s1, const char* s2);
 void insertPet(Pet** head, const char* name, int age);
 void displayPets(const Pet* head);
 void writePetsToFile(const Pet* head, const char* filename);
 Pet* removePet(Pet** head, const char* name);
 void deallocatePets(Pet** head);
+
+// Helper function prototypes from other assignments
 void clearBufferAndFgets(char* str, int size);
 bool scanInt(const char* stringPointer, int* value);
-int getValidInt(int min, int max, int sentinel);
+int getValidInt(int min, int max);
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 int main() 
 {
     Pet* head = NULL;
-    char name[STRING_LENGTH];
-    int age;
+    
     char filename[STRING_LENGTH];
+    char name[STRING_LENGTH];
+    
+    int age;
     int choice;
 
     do 
     {
         // Display Menu
         puts("1. Insert Pet\n2. Display Pets\n3. Remove Pet\n4. Write Pets to File\n5. Exit\n\nEnter your choice: ");
-        choice = getValidInt(1, 4, 5);
+        choice = getValidInt(1, 5);
 
         switch (choice) 
         {
@@ -62,8 +66,10 @@ int main()
             puts("\nEnter pet name: ");
             clearBufferAndFgets(name, sizeof(name));
             puts("Enter pet age: ");
+
             // Assuming 200 as a realistic maximum age for a pet... turtle right?
-            age = getValidInt(0, 200, -1);
+            age = getValidInt(0, 200);
+
             insertPet(&head, name, age);
             break;
 
@@ -76,6 +82,7 @@ int main()
         case 3: 
             puts("\nEnter pet name to remove: ");
             clearBufferAndFgets(name, sizeof(name));
+
             Pet* removedPet = removePet(&head, name);
             if (removedPet) 
             {
@@ -90,17 +97,41 @@ int main()
 
         // Write Pets to File
         case 4: 
-            puts("Enter filename: ");
-            clearBufferAndFgets(filename, sizeof(filename));
 
-            // check if filename does not end with .txt, not sure if testers will add that or not
-            if (strcmp(filename + strlen(filename) - 4, ".txt") != 0) 
-			{
-				strcat(filename, ".txt");
-			}
+            // if the list is empty, don't bother asking for a filename
+            if (head)
+            {
 
-            writePetsToFile(head, filename);
-            break;
+                puts("Enter filename: ");
+                clearBufferAndFgets(filename, sizeof(filename));
+
+                bool isSafe = true;
+
+                // check if filename does not end with .txt, not sure if testers will add that or not
+                if (strcmp(filename + strlen(filename) - 4, ".txt") != 0)
+                {
+                    // not really needed, but was an edge case I considered.
+                    if (strlen(filename) + 4 > STRING_LENGTH)
+                    {
+                        isSafe = false;
+                        puts("Filename too long, cannot add .txt extension");
+
+                    }
+                    else
+                    {
+                        strcat(filename, ".txt");
+                    }
+                }
+
+                if (isSafe)
+                    writePetsToFile(head, filename);
+
+                break;
+            }
+            else
+            {
+                puts("The list is empty\n");
+            }
 
         }
 
@@ -120,7 +151,6 @@ int main()
 
 int stringCompare(const char* s1, const char* s2) 
 {
-
     /*
     * 
     * This function compares two strings regardless of case and returns an integer value based on the comparison.
@@ -177,7 +207,7 @@ void insertPet(Pet** head, const char* name, int age)
     // if allocation fails, bail out
     if (newPet == NULL)
     {
-        fprintf(stderr, "Memory allocation failed\n");
+        puts("Error allocating memory");
         return;
     }
     //null-terminate
@@ -199,7 +229,6 @@ void insertPet(Pet** head, const char* name, int age)
     // Insert new_pet into the list
     newPet->next = *tracer;
     *tracer = newPet;
-
 }
 
 //--------------------start-of-displayPets()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -372,7 +401,7 @@ void clearBufferAndFgets(char* str, int size)
 
 //--------------------start-of-getValidInt()----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int getValidInt(int min, int max, int sentinel)
+int getValidInt(int min, int max)
 {
     /*
     * Gets a valid integer from the user.
@@ -380,7 +409,6 @@ int getValidInt(int min, int max, int sentinel)
     * Parameters:
     * min (int): The minimum value the user can enter.
     * max (int): The maximum value the user can enter.
-    * sentinel (int): The value that will end the loop.
     *
     * Returns:
     * value (int): The valid integer the user entered.
@@ -398,7 +426,7 @@ int getValidInt(int min, int max, int sentinel)
         bool result = scanInt(inputStr, &value);
 
         // If parsing was successful and the number is within the valid range or it's the sentinel value
-        if (result && ((value >= min && value <= max) || value == sentinel))
+        if (result && ((value >= min && value <= max)))
         {
             return value;
         }
