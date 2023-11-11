@@ -92,6 +92,13 @@ int main()
         case 4: 
             puts("Enter filename: ");
             clearBufferAndFgets(filename, sizeof(filename));
+
+            // check if filename does not end with .txt, not sure if testers will add that or not
+            if (strcmp(filename + strlen(filename) - 4, ".txt") != 0) 
+			{
+				strcat(filename, ".txt");
+			}
+
             writePetsToFile(head, filename);
             break;
 
