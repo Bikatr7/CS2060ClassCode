@@ -236,7 +236,27 @@ Pet* removePet(Pet** head, const char* name)
 
 //--------------------start-of-deallocatePets()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void deallocatePets(Pet** head) 
+void deallocatePets(Pet** head)
 {
+    /*
+    *
+    * This function deallocates all the pets in the list.
+    *
+    * Parameters:
+    * head (Pet**) : A pointer to the head of the list.
+    *
+    */
 
+    Pet* current = *head;
+    Pet* temp;
+
+    while (current != NULL)
+    {
+        temp = current;
+        current = current->next;
+        free(temp);
+    }
+
+    // kill the head
+    *head = NULL;
 }
