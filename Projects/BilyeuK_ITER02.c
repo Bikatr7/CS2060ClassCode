@@ -132,9 +132,11 @@ int main()
 
         bool exitRentalMode = rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS, DISCOUNT_MULTIPLIER, CATEGORY_NAMES);
 
-        if(exitRentalMode)
+        if (exitRentalMode)
             printSummaryReport(&property);
     }
+
+    puts("Exiting AirUCCS.");
 
     return 0;
 }
@@ -186,8 +188,11 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     property->totalNights = 0;
     property->totalRenters = 0;
     property->numRenters = 0;
+
     property->numCategories = numCategories;
     property->mutliplier = multiplier;
+    property->minNights = minNights;
+    property->maxNights = maxNights;
 
     // Initialize the reviews and category averages to 0
     for (size_t i = 0; i < numCategories; ++i)
@@ -460,13 +465,14 @@ void printPropertyRatings(Property* property, const char* CATEGORY_NAMES[RENTER_
 
     if (property->totalRenters > 0)
     {
-        puts("Rating Categories: ");
+        printf("Rating Categories:\t");
 
-        // Print the category names
         for (size_t i = 0; i < property->numCategories; i++)
         {
-            printf("\t%zu. %s\n", i + 1, CATEGORY_NAMES[i]);
+            printf("%zu. %s\t", i + 1, CATEGORY_NAMES[i]);
         }
+
+        puts("");
 
         for (size_t i = 0; i < property->totalRenters; i++)
         {
@@ -475,7 +481,8 @@ void printPropertyRatings(Property* property, const char* CATEGORY_NAMES[RENTER_
             {
                 printf("%d\t\t\t", property->reviews[i][ii]);
             }
-            puts("");
+
+            puts(""); 
         }
     }
     else
@@ -660,7 +667,7 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
 
     if(!loginSuccess)
     {
-        puts("You have exceeded the maximum number of login attempts.\nExiting AirUCCS.");
+        puts("You have exceeded the maximum number of login attempts.");
     }
 
     return loginSuccess;
