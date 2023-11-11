@@ -42,7 +42,69 @@ int getValidInt(int min, int max, int sentinel);
 
 int main() 
 {
+    Pet* head = NULL;
+    char name[STRING_LENGTH];
+    int age;
+    char filename[STRING_LENGTH];
+    int choice;
 
+    do 
+    {
+        // Display Menu
+        puts("\n1. Insert Pet\n2. Display Pets\n3. Remove Pet\n4. Write Pets to File\n5. Exit\nEnter your choice: ");
+        choice = getValidInt(1, 4, 5);
+
+        switch (choice) 
+        {
+        
+        // Insert Pet
+        case 1: 
+            printf("Enter pet name: ");
+            clearBufferAndFgets(name, sizeof(name));
+            printf("Enter pet age: ");
+            // Assuming 200 as a realistic maximum age for a pet... turtle right?
+            age = getValidInt(0, 200, -1);
+            insertPet(&head, name, age);
+            break;
+
+        // Display Pets
+        case 2:
+            displayPets(head);
+            break;
+
+        // Remove Pet
+        case 3: 
+            puts("Enter pet name to remove: ");
+            clearBufferAndFgets(name, sizeof(name));
+            Pet* removedPet = removePet(&head, name);
+            if (removedPet) 
+            {
+                printf("Removed: %s\n", removedPet->name);
+                free(removedPet);
+            }
+            else 
+            {
+                puts("Pet not found.\n");
+            }
+            break;
+
+        // Write Pets to File
+        case 4: 
+            puts("Enter filename: ");
+            clearBufferAndFgets(filename, sizeof(filename));
+            writePetsToFile(head, filename);
+            break;
+
+        }
+
+    } while (choice != 5);
+
+    puts("Exiting...\n");
+
+    // Clean-up
+    deallocatePets(&head);
+
+    return 0;
 }
 
 //--------------------start-of-stringCompare()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
