@@ -31,6 +31,7 @@ void displayPets(const Pet* head);
 void writePetsToFile(const Pet* head, const char* filename);
 Pet* removePet(Pet** head, const char* name);
 void deallocatePets(Pet** head);
+void clearBufferAndFgets(char* str, int size);
 
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -259,4 +260,34 @@ void deallocatePets(Pet** head)
 
     // kill the head
     *head = NULL;
+}
+
+//--------------------start-of-clearBufferAndFgets()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void clearBufferAndFgets(char* str, int size)
+{
+
+    /*
+    *
+    * Clears the buffer and gets a string from the user.
+    *
+    * Parameters:
+    * str (char*): The string to store the user input in.
+    * size (int): The size of the string.
+    *
+    */
+
+    fgets(str, size, stdin);
+
+    // Remove any newline at the end
+    char* newline = strchr(str, '\n');
+    if (newline)
+    {
+        *newline = '\0';
+    }
+    else
+    {
+        // Clear the rest of the buffer until newline is found or EOF
+        while ((getchar()) != '\n') {}
+    }
 }
