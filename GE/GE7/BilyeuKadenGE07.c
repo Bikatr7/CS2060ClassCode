@@ -51,7 +51,7 @@ int main()
     do 
     {
         // Display Menu
-        puts("\n1. Insert Pet\n2. Display Pets\n3. Remove Pet\n4. Write Pets to File\n5. Exit\nEnter your choice: ");
+        puts("1. Insert Pet\n2. Display Pets\n3. Remove Pet\n4. Write Pets to File\n5. Exit\n\nEnter your choice: ");
         choice = getValidInt(1, 4, 5);
 
         switch (choice) 
@@ -59,9 +59,9 @@ int main()
         
         // Insert Pet
         case 1: 
-            printf("Enter pet name: ");
+            puts("\nEnter pet name: ");
             clearBufferAndFgets(name, sizeof(name));
-            printf("Enter pet age: ");
+            puts("Enter pet age: ");
             // Assuming 200 as a realistic maximum age for a pet... turtle right?
             age = getValidInt(0, 200, -1);
             insertPet(&head, name, age);
@@ -74,7 +74,7 @@ int main()
 
         // Remove Pet
         case 3: 
-            puts("Enter pet name to remove: ");
+            puts("\nEnter pet name to remove: ");
             clearBufferAndFgets(name, sizeof(name));
             Pet* removedPet = removePet(&head, name);
             if (removedPet) 
@@ -96,6 +96,8 @@ int main()
             break;
 
         }
+
+        puts("\n")
 
     } while (choice != 5);
 
