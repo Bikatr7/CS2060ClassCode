@@ -141,8 +141,8 @@ void displayPets(const Pet* head)
     // Check if the list is empty
     if (head == NULL)
     {
-        printf("No pets in the list.\n");
-        return;
+       puts("The list is empty");
+       return;
     }
 
     // Traverse the list and print the pets in da list.
@@ -155,17 +155,83 @@ void displayPets(const Pet* head)
 
 //--------------------start-of-writePetsToFile()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void writePetsToFile(const Pet* head, const char* filename) 
+void writePetsToFile(const Pet* head, const char* filename)
 {
+    /*
+    *
+    * This function writes the pets in the linked list to a file.
+    *
+    * Parameters:
+    * head (const Pet*) : A pointer to the head of the list.
+    * filename (const char*) : The name of the file to write to.
+    *
+    */
 
+    // open file for writing
+    FILE* file = fopen(filename, "w"); 
+    if (file == NULL)
+    {
+        puts("Error opening file");
+        return;
+    }
+
+    const Pet* current = head;
+    while (current != NULL)
+    {
+        fprintf(file, "Pet Name: %s, Pet Age: %d\n", current->name, current->age);
+        current = current->next; // Move to the next node
+    }
+
+    fclose(file);
 }
 
 //--------------------start-of-removePet()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-Pet* removePet(Pet** head, const char* name) 
+Pet* removePet(Pet** head, const char* name)
 {
+    /*
+    *
+    * This function removes a pet from the list by name.
+    *
+    * Parameters:
+    * head (Pet**) : A pointer to the head of the list.
+    * name (const char*) : The name of the pet to remove.
+    *
+    * Returns:
+    * Pet* : A pointer to the removed pet, or NULL if the pet is not found.
+    *
+    */
 
+    Pet* temp, * prev;
+    temp = *head;
+    prev = NULL;
+
+    // Traverse da list to find the pet
+    while (temp != NULL && stringCompare(temp->name, name) != 0)
+    {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    // If the pet was not found
+    if (temp == NULL)
+    {
+        return NULL;
+    }
+
+    // Pet found, remove it from da list
+    if (prev == NULL)
+    {
+        // Pet is the first in the list
+        *head = temp->next;
+    }
+    else
+    {
+        // Pet is in the middle/end
+        prev->next = temp->next;
+    }
+
+    return temp;
 }
 
 //--------------------start-of-deallocatePets()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
