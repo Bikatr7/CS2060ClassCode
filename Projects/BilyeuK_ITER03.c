@@ -96,6 +96,9 @@ int getValidInt(int min, int max, int sentinel);
 // Properly scans an integer from a string.
 bool scanInt(const char* stringPointer, int* value);
 
+// Gets a valid choice from the user.
+char getSingleCharacterInput();
+
 //-------------------------Core-Calculation-------------------------/
 
 // Calculate the average rating for each category.
@@ -165,16 +168,26 @@ int main()
     PropertyNode* propertiesHead = NULL;
 
     Property property;
+
     const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES] = { "Check-in Process", "Cleanliness", "Amenities", "cat4" };
 
-    // Check for successful login
-    if (ownerMode(CORRECT_ID, CORRECT_PASSCODE, LOGIN_MAX_ATTEMPTS))
-    {
-        // Set up the property
-        setupProperty(&property, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, RENTER_SURVEY_CATEGORIES, VACATION_RENTERS, DISCOUNT_MULTIPLIER);
+    char addAnother = 'y';
 
-        // Insert the property into the linked list
-        insertPropertyAlphabetically(&propertiesHead, &property);
+    // Check for successful login
+    if(ownerMode(CORRECT_ID, CORRECT_PASSCODE, LOGIN_MAX_ATTEMPTS))
+    {
+        do 
+        {
+            // Set up the propertys
+            setupProperty(&property, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, RENTER_SURVEY_CATEGORIES, VACATION_RENTERS, DISCOUNT_MULTIPLIER);
+
+            // Insert the property into the linked list
+            insertPropertyAlphabetically(&propertiesHead, &property);
+
+            puts("Add another property? (y/n): ");
+            addAnother = getSingleCharacterInput();
+
+        } while (addAnother == 'y');
 
         // Run the rental mode
         bool exitRentalMode = rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS, DISCOUNT_MULTIPLIER, CATEGORY_NAMES);
@@ -414,6 +427,38 @@ bool scanInt(const char* stringPointer, int* value)
     }
 
     return isValid;
+}
+
+//--------------------start-of-getSingleCharacterInput()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+char getSingleCharacterInput()
+{
+    /*
+    *
+    * Gets a valid choice from the user.
+    *
+    * Returns:
+    * choice (char): The valid choice the user entered.
+    *
+    */
+
+    char choice;
+
+    // Loop until valid input
+    while (1)
+    {
+        choice = getchar();
+        while (getchar() != '\n'); // Clear the input buffer
+
+        if (tolower(choice) == 'y' || tolower(choice) == 'n')
+        {
+            return choice;
+        }
+        else
+        {
+            puts("Error: Invalid choice. Please enter (y)es or (n)o.");
+        }
+    }
 }
 
 //--------------------start-of-calculateCharges()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
