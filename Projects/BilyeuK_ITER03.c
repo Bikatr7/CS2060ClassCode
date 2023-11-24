@@ -60,8 +60,16 @@ typedef struct
     char locName[STRING_LENGTH];
     char propName[STRING_LENGTH];
  
-
 } Property;
+
+//--------------------start-of-PropertyNode------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+typedef struct PropertyNode 
+{
+    Property data;
+    struct PropertyNode* next;
+
+} PropertyNode;
 
 //--------------------start-of-Function-Prototypes------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -71,6 +79,9 @@ typedef struct
 void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel, int numCategories, int maxRenters, int multiplier);
 
 //-------------------------Input-And-Utility-------------------------/
+
+// Gets the user's credentials.
+void getUserCredentials(char* username, char* password);
 
 // Clears the buffer and gets a string from the user.
 void clearBufferAndFgets(char* str, int size);
@@ -206,6 +217,28 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
             property->reviews[ii][i] = 0;
         }
     }
+}
+
+//--------------------start-of-getUserCredentials()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void getUserCredentials(char* username, char* password)
+{
+
+    /*
+    *
+    * Gets the user's credentials.
+    * 
+    * Parameters:
+    * username (char*): The string to store the username in.
+    * password (char*): The string to store the password in.
+    * 
+    */
+
+    puts("Enter your AirUCCS ID: ");
+    clearBufferAndFgets(username, STRING_LENGTH);
+
+    puts("Enter your AirUCCS password: ");
+    clearBufferAndFgets(password, STRING_LENGTH);
 }
 
 //--------------------start-of-clearBufferAndFgets()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -379,7 +412,6 @@ void calculateCategoryAverages(Property* property)
         }
         else
         {
-            // If there are no renters, set the average to 0
             property->categoryAverages[ii] = 0;
         }
     }
@@ -648,11 +680,8 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
 
     while (attempts < maxAttempts && !loginSuccess)
     {
-        puts("Enter your AirUCCS ID: ");
-        clearBufferAndFgets(username, STRING_LENGTH);
 
-        puts("Enter your AirUCCS password: ");
-        clearBufferAndFgets(password, STRING_LENGTH);
+        getUserCredentials(username, password);
 
         if(strcmp(username, correctUsername) == 0 && strcmp(password, correctPassword) == 0)
         {
