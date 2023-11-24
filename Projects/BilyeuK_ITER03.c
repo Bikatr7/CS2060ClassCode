@@ -141,6 +141,9 @@ void insertPropertyAlphabetically(PropertyNode** head, Property* property);
 // Selects a property from the linked list.
 PropertyNode* selectProperty(PropertyNode* head);
 
+// Frees the linked list memory.
+void freePropertyList(PropertyNode** head);
+
 //-------------------------File-IO-------------------------/
 
 // Constructs the filepath.
@@ -856,6 +859,33 @@ PropertyNode* selectProperty(PropertyNode* head)
 
     printf("No property found with the name: %s\n", propName);
     return NULL;
+}
+
+//----------------------start-of-freePropertyList()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void freePropertyList(PropertyNode** head) 
+{
+
+    /*
+    * 
+    * Frees the linked list memory.
+    * 
+    * Parameters:
+    * head (PropertyNode**): The head of the linked list.
+    * 
+    */
+
+    PropertyNode* current = *head;
+    PropertyNode* nextNode = NULL;
+
+    while (current != NULL) 
+    {
+        nextNode = current->next;
+        free(current);
+        current = nextNode;
+    }
+
+    *head = NULL; // Set head to NULL after freeing the list
 }
 
 //----------------------start-of-constructFilePath()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
