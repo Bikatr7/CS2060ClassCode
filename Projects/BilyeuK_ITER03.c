@@ -36,7 +36,7 @@
 #define DISCOUNT_MULTIPLIER 2
 
 // file directory
-#define PROPERY_FOLDER "C:\\Users\\Tetra\\CS2060Project\\CS2060Project"
+#define PROPERY_FOLDER "C:\\Users\\Tetra\\CS2060Project\\CS2060Project\\"
 
 //--------------------start-of-Property------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1076,10 +1076,10 @@ void constructFilePath(char* filepath, const char* DIRECTORY, const char* PROPER
     * 
 	*/
 
-    char safePropName[STRING_LENGTH + 50];
+    char safePropName[STRING_LENGTH + 150];
 
-    strncpy(safePropName, PROPERTY_NAME, STRING_LENGTH + 50);
-    safePropName[STRING_LENGTH - 49] = '\0';
+    strncpy(safePropName, PROPERTY_NAME, STRING_LENGTH + 150);
+    safePropName[STRING_LENGTH + 149] = '\0';
 
     // Replace spaces with underscores
     for (int i = 0; safePropName[i] != '\0'; i++) 
@@ -1091,8 +1091,8 @@ void constructFilePath(char* filepath, const char* DIRECTORY, const char* PROPER
     }
 
     // Construct the filepath
-    strncpy(filepath, DIRECTORY, STRING_LENGTH + 50);
-    filepath[STRING_LENGTH - 49] = '\0';
+    strncpy(filepath, DIRECTORY, STRING_LENGTH + 150);
+    filepath[STRING_LENGTH + 149] = '\0';
 
     strcat(filepath, safePropName);
     strcat(filepath, ".txt");
@@ -1113,7 +1113,7 @@ void writeToFile(Property* property, const char* DIRECTORY)
     * 
     */
 
-    char filename[STRING_LENGTH + 50];
+    char filename[STRING_LENGTH + 150];
 
     constructFilePath(filename, DIRECTORY, property->propName);
 
