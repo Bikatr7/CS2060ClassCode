@@ -138,6 +138,17 @@ PropertyNode* createPropertyNode(Property* property);
 // Inserts a property node into the linked list alphabetically.
 void insertPropertyAlphabetically(PropertyNode** head, Property* property);
 
+// Selects a property from the linked list.
+PropertyNode* selectProperty(PropertyNode* head);
+
+//-------------------------File-IO-------------------------/
+
+// Constructs the filepath.
+void constructFilePath(char* filepath, const char* directory, const char* propName);
+
+// Writes the rental property information to a file.
+void writeToFile(Property* property, const char* directory);
+
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 int main() 
@@ -809,4 +820,107 @@ void insertPropertyAlphabetically(PropertyNode** head, Property* property)
         newNode->next = current->next;
         current->next = newNode;
     }
+}
+
+//----------------------start-of-selectProperty()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+PropertyNode* selectProperty(PropertyNode* head) 
+{
+
+    /*
+    *
+    * Selects a property from the linked list.
+    * 
+    * Parameters:
+    * head (PropertyNode*): The head of the linked list.
+    * 
+    * Returns:
+    * current (PropertyNode*): The selected property node.
+    * 
+    */
+
+    char propName[STRING_LENGTH];
+    PropertyNode* current = head;
+
+    puts("Enter the name of the property you want to rent: ");
+    clearBufferAndFgets(propName, STRING_LENGTH);
+
+    while (current != NULL) 
+    {
+        if (strcmp(current->data.propName, propName) == 0) 
+        {
+            return current;
+        }
+        current = current->next;
+    }
+
+    printf("No property found with the name: %s\n", propName);
+    return NULL;
+}
+
+//----------------------start-of-constructFilePath()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void constructFilePath(char* filepath, const char* directory, const char* propName) 
+{
+
+    /*
+    * 
+    * Constructs the filepath.
+    * 
+    * Parameters:
+    * filepath (char*): The filepath to construct.
+    * directory (const char*): The directory to write the file to.
+    * propName (const char*): The name of the rental property.
+    * 
+	*/
+
+    char safePropName[STRING_LENGTH];
+
+    strcpy(safePropName, propName);
+
+    // Replace spaces with underscores
+    for (int i = 0; safePropName[i] != '\0'; i++) 
+    {
+        if (safePropName[i] == ' ') 
+        {
+            safePropName[i] = '_';
+        }
+    }
+
+    // Construct the filepath
+    strcpy(filepath, directory);
+    strcat(filepath, safePropName);
+    strcat(filepath, ".txt");
+}
+
+//--------------------start-of-writeToFile()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void writeToFile(Property* property, const char* directory) 
+{
+
+    /*
+    * 
+    * Writes the rental property information to a file.
+    * 
+    * Parameters:
+    * property (Property*): The rental property to write to the file.
+    * directory (const char*): The directory to write the file to.
+    * 
+    */
+
+    char filename[STRING_LENGTH + 50];
+
+    constructFilePath(filename, directory, property->propName);
+
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) 
+    {
+        puts("Error opening file");
+        return;
+    }
+
+    // Writing property details to the file
+    fprintf(file, "Property Name: %s\nLocation: %s\nTotal Nights Rented: %d\nTotal Charges: $%d\n", property->propName, property->locName, property->totalNights, property->totalCharge);
+
+    fclose(file);
 }
