@@ -95,7 +95,7 @@ void clearBufferAndFgets(char* str, int size);
 int stringCompare(const char* s1, const char* s2);
 
 // Gets a valid integer from the user.
-int getValidInt(int min, int max, int sentinel);
+int getValidInt(int min, int max, int sentinel, bool allowSentinel);
 
 // Properly scans an integer from a string.
 bool scanInt(const char* stringPointer, int* value);
@@ -246,16 +246,16 @@ Property* setupProperty(int minNights, int maxNights, int minRate, int maxRate, 
     printf("Maximum rate: $%d\n", maxRate);
 
     puts("\nEnter the number of nights until the first discount interval: ");
-    property->interval1 = getValidInt(minNights, maxNights, sentinel);
+    property->interval1 = getValidInt(minNights, maxNights, sentinel, false);
 
     puts("Enter the number of nights until the second discount interval: ");
-    property->interval2 = getValidInt(property->interval1, maxNights, sentinel);
+    property->interval2 = getValidInt(property->interval1, maxNights, sentinel, false);
 
     puts("Enter the nightly rate: ");
-    property->rate = getValidInt(minRate, maxRate, sentinel);
+    property->rate = getValidInt(minRate, maxRate, sentinel, false);
 
     puts("Enter the discount rate: ");
-    property->discount = getValidInt(minRate, property->rate - 1, sentinel);
+    property->discount = getValidInt(minRate, property->rate - 1, sentinel, false);
 
     puts("Enter the rental property name: ");
     clearBufferAndFgets(property->propName, STRING_LENGTH);
@@ -381,7 +381,7 @@ int stringCompare(const char* s1, const char* s2)
 
 //--------------------start-of-getValidInt()----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int getValidInt(int min, int max, int sentinel)
+int getValidInt(int min, int max, int sentinel, bool allowSentinel)
 {
     /*
     * Gets a valid integer from the user.
@@ -404,13 +404,18 @@ int getValidInt(int min, int max, int sentinel)
 
         if (scanInt(inputStr, &value)) 
         {
-            if ((value >= min && value <= max) || value == sentinel) 
+            if ((value >= min && value <= max) || (value == sentinel && allowSentinel))
             {
                 return value;
             }
         }
 
-        printf("Error: Please enter a valid value (%d to %d or %d to exit).\n", min, max, sentinel);
+        if(allowSentinel)
+            printf("Error: Please enter a valid value (%d to %d or %d to exit).\n", min, max, sentinel);
+        else
+        {
+            printf("Error: Please enter a valid value (%d to %d).\n", min, max);
+        }
     }
 }
 
@@ -819,7 +824,7 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
         if (selectedProperty) 
         {
             puts("\nEnter the number of nights you want to rent the property: ");
-            currNights = getValidInt(selectedProperty->data.minNights, selectedProperty->data.maxNights, sentinel);
+            currNights = getValidInt(selectedProperty->data.minNights, selectedProperty->data.maxNights, sentinel, true);
 
             if (currNights != sentinel) 
             {
@@ -921,7 +926,7 @@ void getRatings(Property* property, int sentinel, const char* CATEGORY_NAMES[REN
     for (size_t ii = 0; ii < property->numCategories; ++ii)
     {
         printf("Enter your rating for Category %zu (%s): ", ii + 1, CATEGORY_NAMES[ii]);
-        int rating = getValidInt(MIN_STARS, MAX_STARS, sentinel);
+        int rating = getValidInt(MIN_STARS, MAX_STARS, sentinel, false);
         property->reviews[property->totalRenters-1][ii] = rating;
     }
 }
