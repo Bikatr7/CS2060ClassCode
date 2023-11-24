@@ -81,7 +81,7 @@ typedef struct PropertyNode
 //-------------------------Initialization-------------------------/
 
 // Sets up the rental property.
-void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel, int numCategories, int maxRenters, int multiplier);
+Property* setupProperty(int minNights, int maxNights, int minRate, int maxRate, int sentinel, int numCategories, int maxRenters, int multiplier);
 
 //-------------------------Input-And-Utility-------------------------/
 
@@ -177,8 +177,6 @@ int main()
     // Initialize the head of the linked list
     PropertyNode* propertiesHead = NULL;
 
-    Property property;
-
     const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES] = { "Check-in Process", "Cleanliness", "Amenities" };
 
     char addAnother = 'y';
@@ -189,10 +187,10 @@ int main()
         do 
         {
             // Set up the propertys
-            setupProperty(&property, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, RENTER_SURVEY_CATEGORIES, VACATION_RENTERS, DISCOUNT_MULTIPLIER);
+            Property* newProperty = setupProperty(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, RENTER_SURVEY_CATEGORIES, VACATION_RENTERS, DISCOUNT_MULTIPLIER);
 
             // Insert the property into the linked list
-            insertPropertyAlphabetically(&propertiesHead, &property);
+            insertPropertyAlphabetically(&propertiesHead, newProperty);
 
             puts("Add another property? (y/n): ");
             addAnother = getSingleCharacterInput();
@@ -215,7 +213,7 @@ int main()
 
 //--------------------start-of-setupProperty()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void setupProperty(Property* property, int minNights, int maxNights, int minRate, int maxRate, int sentinel, int numCategories, int maxRenters, int multiplier)
+Property* setupProperty(int minNights, int maxNights, int minRate, int maxRate, int sentinel, int numCategories, int maxRenters, int multiplier)
 {
     /*
     *
@@ -233,6 +231,14 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     * multiplier (int): The multiplier for the discount.
     *
     */
+
+    Property* property = (Property*)malloc(sizeof(Property));
+
+    if (property == NULL) 
+    {
+        puts("Error allocating memory for property");
+        return NULL;
+    }
 
     printf("Minimum number of nights: %d\n", minNights);
     printf("Maximum number of nights: %d\n", maxNights);
@@ -277,6 +283,9 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
             property->reviews[ii][i] = 0;
         }
     }
+
+    return property;
+
 }
 
 //--------------------start-of-getUserCredentials()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
