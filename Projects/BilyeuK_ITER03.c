@@ -115,6 +115,9 @@ double calculateOverallSatisfaction(Property* property);
 //Prints the rental property information.
 void printRentalPropertyInfo(Property* property);
 
+// Prints all of the rental properties.
+void printAllProperties(PropertyNode* head);
+
 // Print the survey results.
 void printPropertyRatings(Property* property, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]);
 
@@ -123,6 +126,9 @@ void printNightsCharges(unsigned int nights, int charges);
 
 // Prints the rental property summary report.
 void printSummaryReport(Property* property, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]);
+
+// Prints the rental property summary reports.
+void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]);
 
 //-------------------------Interactive-Modes-------------------------/
 
@@ -193,7 +199,7 @@ int main()
         bool exitRentalMode = rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS, DISCOUNT_MULTIPLIER, CATEGORY_NAMES);
 
         if (exitRentalMode)
-            printSummaryReport(&property, CATEGORY_NAMES);
+            printSummaryReports(propertiesHead, CATEGORY_NAMES);
     }
 
     puts("Exiting AirUCCS.");
@@ -592,6 +598,30 @@ void printRentalPropertyInfo(Property* property)
 
 }
 
+//----------------------start-of-printAllProperties()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void printAllProperties(PropertyNode* head) 
+{
+
+    /*
+    * 
+    * Prints all of the rental properties.
+    * 
+    * Parameters:
+    * head (PropertyNode*): The head of the linked list.
+    * 
+	*/
+
+    PropertyNode* current = head;
+
+    puts("\nAvailable Rental Properties:\n");
+    while (current != NULL) 
+    {
+        printRentalPropertyInfo(&current->data);
+        current = current->next;
+    }
+}
+
 //----------------------start-of-printPropertyRatings()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void printPropertyRatings(Property* property, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES])
@@ -707,6 +737,29 @@ void printSummaryReport(Property* property, const char* CATEGORY_NAMES[RENTER_SU
     puts("============================================================");
     puts("Thank you for using AirUCCS. Have a great day!");
     puts("============================================================\n");
+}
+
+//--------------------start-of-printSummaryReports()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]) 
+{
+
+    /*
+    * 
+    * Prints the rental property summary reports.
+    * 
+    * Parameters:
+    * head (PropertyNode*): The head of the linked list.
+    * 
+	*/
+
+    PropertyNode* current = head;
+
+    while (current != NULL) 
+    {
+        printSummaryReport(&current->data, CATEGORY_NAMES);
+        current = current->next;
+    }
 }
 
 //--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
