@@ -257,27 +257,19 @@ int getValidInt(int min, int max, int sentinel)
     char inputStr[STRING_LENGTH];
     int value;
 
-    // Loop until valid input
-    while (1)
+    while (1) 
     {
         clearBufferAndFgets(inputStr, STRING_LENGTH);
 
-        // *Try* to parse the string to an integer using scanInt
-        bool result = scanInt(inputStr, &value);
+        if (scanInt(inputStr, &value)) 
+        {
+            if ((value >= min && value <= max) || value == sentinel) 
+            {
+                return value;
+            }
+        }
 
-        // If parsing was successful and the number is within the valid range or it's the sentinel value
-        if (result && ((value >= min && value <= max) || value == sentinel))
-        {
-            return value;
-        }
-        else if (!result)
-        {
-            puts("Error: Not an integer number. Please enter the value again.\n");
-        }
-        else
-        {
-            printf("Error: Not within %d and %d. Please enter the value again.\n", min, max);
-        }
+        printf("Error: Please enter a valid value (%d to %d or %d to exit).\n", min, max, sentinel);
     }
 }
 
