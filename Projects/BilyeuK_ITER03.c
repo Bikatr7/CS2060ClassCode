@@ -133,7 +133,7 @@ void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_S
 //-------------------------Interactive-Modes-------------------------/
 
 // Runs the rental mode.
-bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts, int multiplier, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]);
+bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword[], int sentinel, int maxAttempts, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]);
 
 // Prints the rental property information.
 bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts);
@@ -196,7 +196,7 @@ int main()
         } while (addAnother == 'y');
 
         // Run the rental mode
-        bool exitRentalMode = rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS, DISCOUNT_MULTIPLIER, CATEGORY_NAMES);
+        bool exitRentalMode = rentalMode(propertiesHead, CORRECT_ID, CORRECT_PASSCODE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS, CATEGORY_NAMES);
 
         if (exitRentalMode)
             printSummaryReports(propertiesHead, CATEGORY_NAMES);
@@ -764,7 +764,7 @@ void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_S
 
 //--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool rentalMode(Property* property, char correctUsername[], char correctPassword[], int minNights, int maxNights, int minRate, int maxRate, int sentinel, int maxAttempts, int multiplier, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES])
+bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword[], int sentinel, int maxAttempts, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES])
 {
     /*
     * 
@@ -787,44 +787,49 @@ bool rentalMode(Property* property, char correctUsername[], char correctPassword
     * 
     */
 
+    PropertyNode* selectedProperty;
+
     bool exitRentalMode = false;
-    int currNights;
-    int currCharge;
+
+    int currNights, currCharge;
+
+    char rentAnother = 'n';
 
     do 
     {
-        // reset number of renters
-        property->numRenters = 0;
+        printAllProperties(head);
 
-        printRentalPropertyInfo(property);
-        printPropertyRatings(property, CATEGORY_NAMES);
-
-        puts("\nEnter the number of nights you want to rent the property: ");
-        currNights = getValidInt(minNights, maxNights, sentinel);
-        
-        if (currNights == sentinel)
+        selectedProperty = selectProperty(head);
+        if (selectedProperty) 
         {
-            exitRentalMode = ownerMode(correctUsername, correctPassword, maxAttempts);
+            puts("\nEnter the number of nights you want to rent the property: ");
+            currNights = getValidInt(selectedProperty->data.minNights, selectedProperty->data.maxNights, sentinel);
 
+            if (currNights != sentinel) 
+            {
+                currCharge = calculateCharges(currNights, selectedProperty->data.interval1, selectedProperty->data.interval2, selectedProperty->data.rate, selectedProperty->data.discount, DISCOUNT_MULTIPLIER);
+                
+                selectedProperty->data.totalCharge += currCharge;
+                selectedProperty->data.totalRenters++;
+                selectedProperty->data.totalNights += currNights;
+
+                printNightsCharges(currNights, currCharge);
+                getRatings(&selectedProperty->data, sentinel, CATEGORY_NAMES);
+            }
+
+            // Check if user wants to rent another property
+            puts("Do you want to rent another property? (y/n): ");
+            rentAnother = getSingleCharacterInput();
         }
-        else 
-        {
-            currCharge = calculateCharges(currNights, property->interval1, property->interval2, property->rate, property->discount, multiplier);
+    } while (rentAnother == 'y' || rentAnother == 'Y' || currNights == sentinel);
 
-            property->totalCharge += currCharge;
-            property->totalRenters++;
-            property->numRenters++;
-
-            property->totalNights += currNights;
-
-            printNightsCharges(currNights, currCharge);
-
-            getRatings(property, sentinel, CATEGORY_NAMES);
-        }
-    }
-    while (!exitRentalMode);
+    // Check if user wants to exit and enter owner mode
+    if (currNights == sentinel)
+        exitRentalMode = ownerMode(correctUsername, correctPassword, maxAttempts);
+    
 
     return exitRentalMode;
+
 }
 
 //--------------------start-of-ownerMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1047,7 +1052,7 @@ void constructFilePath(char* filepath, const char* directory, const char* propNa
 
     char safePropName[STRING_LENGTH];
 
-    strcpy(safePropName, propName);
+    strncpy(safePropName, propName, STRING_LENGTH);
 
     // Replace spaces with underscores
     for (int i = 0; safePropName[i] != '\0'; i++) 
@@ -1059,7 +1064,7 @@ void constructFilePath(char* filepath, const char* directory, const char* propNa
     }
 
     // Construct the filepath
-    strcpy(filepath, directory);
+    strncpy(filepath, directory, STRING_LENGTH);
     strcat(filepath, safePropName);
     strcat(filepath, ".txt");
 }
