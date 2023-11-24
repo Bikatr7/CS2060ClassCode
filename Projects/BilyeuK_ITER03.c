@@ -135,19 +135,30 @@ void getRatings(Property* property, int sentinel, const char* CATEGORY_NAMES[REN
 // Creates a new property node.
 PropertyNode* createPropertyNode(Property* property);
 
+// Inserts a property node into the linked list alphabetically.
+void insertPropertyAlphabetically(PropertyNode** head, Property* property);
+
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 int main() 
 {
 
+    // Initialize the head of the linked list
+    PropertyNode* propertiesHead = NULL;
+
     Property property;
+    const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES] = { "Check-in Process", "Cleanliness", "Amenities", "cat4" };
 
-    const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES] = { "Check-in Process", "Cleanliness", "Amenities", "cat4"};
-
-    if (ownerMode(CORRECT_ID, CORRECT_PASSCODE, LOGIN_MAX_ATTEMPTS)) 
+    // Check for successful login
+    if (ownerMode(CORRECT_ID, CORRECT_PASSCODE, LOGIN_MAX_ATTEMPTS))
     {
+        // Set up the property
         setupProperty(&property, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, RENTER_SURVEY_CATEGORIES, VACATION_RENTERS, DISCOUNT_MULTIPLIER);
 
+        // Insert the property into the linked list
+        insertPropertyAlphabetically(&propertiesHead, &property);
+
+        // Run the rental mode
         bool exitRentalMode = rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS, DISCOUNT_MULTIPLIER, CATEGORY_NAMES);
 
         if (exitRentalMode)
@@ -155,6 +166,8 @@ int main()
     }
 
     puts("Exiting AirUCCS.");
+
+    // TODO: Implement and call a function that frees the linked list memory
 
     return 0;
 }
@@ -760,4 +773,40 @@ PropertyNode* createPropertyNode(Property* property)
     newNode->data = *property;
     newNode->next = NULL;
     return newNode;
+}
+
+//----------------------start-of-insertPropertyAlphabetically()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void insertPropertyAlphabetically(PropertyNode** head, Property* property) 
+{
+
+    /*
+    * 
+    * Inserts a property node into the linked list alphabetically.
+    * 
+    * Parameters:
+    * head (PropertyNode**): The head of the linked list.
+    * property (Property*): The rental property to insert into the linked list.
+    * 
+	*/
+
+    PropertyNode* newNode = createPropertyNode(property);
+
+    if (*head == NULL || strcmp((*head)->data.propName, property->propName) >= 0) 
+    {
+        newNode->next = *head;
+        *head = newNode;
+    }
+    else 
+    {
+        PropertyNode* current = *head;
+
+        while (current->next != NULL && strcmp(current->next->data.propName, property->propName) < 0) 
+        {
+            current = current->next;
+        }
+
+        newNode->next = current->next;
+        current->next = newNode;
+    }
 }
