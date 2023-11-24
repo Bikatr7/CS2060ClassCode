@@ -1,11 +1,12 @@
 // Kaden Bilyeu
 // 11-20-2023
 // Iteration 3
-// The goal of this program is to calculate the charges for a rental property. It offers features such as rental property setup, rental property information, rental property ratings, and a summary report. The program also has a login feature for the rental property owner.
+// The goal of this program is to calculate the charges for a rental property. It offers features such as rental property setup, rental property information, rental property ratings, and a summary report. The program also has a login feature for the rental property owner. The program uses a linked list to store the rental properties. The program also writes the rental property information to a file.
 // The code always aims to maintain proper and secure coding practices.
 // Windows 10
-// Visual Studio 2019
+// Visual Studio 2022
 
+// Header Files
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,9 +18,9 @@
 //Maximum length of a string
 #define STRING_LENGTH 80
 
-//Two dimensional array storage amounts for rows and columns of surve data
+//Two dimensional array storage amounts for rows and columns of survey data
 #define VACATION_RENTERS 5
-#define RENTER_SURVEY_CATEGORIES 4
+#define RENTER_SURVEY_CATEGORIES 3
 
 //Rental property login and sentinal values
 #define CORRECT_ID "id"
@@ -178,7 +179,7 @@ int main()
 
     Property property;
 
-    const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES] = { "Check-in Process", "Cleanliness", "Amenities", "cat4" };
+    const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES] = { "Check-in Process", "Cleanliness", "Amenities" };
 
     char addAnother = 'y';
 
@@ -343,16 +344,16 @@ int stringCompare(const char* s1, const char* s2)
     *
     */
 
-    char s1_lower[80];
-    char s2_lower[80];
+    char s1_lower[STRING_LENGTH];
+    char s2_lower[STRING_LENGTH];
 
     // null-terminate.
-    strncpy(s1_lower, s1, 80);
-    s1_lower[79] = '\0';
+    strncpy(s1_lower, s1, STRING_LENGTH);
+    s1_lower[STRING_LENGTH - 1] = '\0';
 
     // null-terminate.
-    strncpy(s2_lower, s2, 80);
-    s2_lower[79] = '\0';
+    strncpy(s2_lower, s2, STRING_LENGTH);
+    s2_lower[STRING_LENGTH - 1] = '\0';
 
     // Convert both strings to lowercase.
     for (int i = 0; s1_lower[i]; i++)
@@ -795,12 +796,12 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
 
     bool exitRentalMode = false;
 
-    int currNights = sentinel;
-    int currCharge = 0; 
+    int currNights = 0;
+    int currCharge = 0;
 
     char rentAnother = 'n';
 
-    do 
+    while (!exitRentalMode)
     {
         printAllProperties(head);
 
@@ -813,29 +814,31 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
             if (currNights != sentinel) 
             {
                 currCharge = calculateCharges(currNights, selectedProperty->data.interval1, selectedProperty->data.interval2, selectedProperty->data.rate, selectedProperty->data.discount, DISCOUNT_MULTIPLIER);
-                
+
                 selectedProperty->data.totalCharge += currCharge;
                 selectedProperty->data.totalRenters++;
                 selectedProperty->data.totalNights += currNights;
 
                 printNightsCharges(currNights, currCharge);
                 getRatings(&selectedProperty->data, sentinel, CATEGORY_NAMES);
+
+                // Check if user wants to rent another property
+                puts("Do you want to rent another property? (y/n): ");
+                rentAnother = getSingleCharacterInput();
+                if (rentAnother == 'n' || rentAnother == 'N') 
+                {
+                    exitRentalMode = true;
+                }
             }
+            else 
+            {
 
-            // Check if user wants to rent another property
-            puts("Do you want to rent another property? (y/n): ");
-            rentAnother = getSingleCharacterInput();
+                exitRentalMode = ownerMode(correctUsername, correctPassword, maxAttempts);
+            }
         }
-
-    } while (rentAnother == 'y' || rentAnother == 'Y' || currNights == sentinel);
-
-    // Check if user wants to exit and enter owner mode
-    if (currNights == sentinel)
-        exitRentalMode = ownerMode(correctUsername, correctPassword, maxAttempts);
-    
+    }
 
     return exitRentalMode;
-
 }
 
 //--------------------start-of-ownerMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1010,7 +1013,7 @@ PropertyNode* selectProperty(PropertyNode* head)
     }
 
     puts("----------------------------------------");
-    printf(\n"No property found with the name: %s\n", propName);
+    printf("\nNo property found with the name: %s\n", propName);
     return NULL;
 }
 
@@ -1057,9 +1060,10 @@ void constructFilePath(char* filepath, const char* directory, const char* propNa
     * 
 	*/
 
-    char safePropName[STRING_LENGTH];
+    char safePropName[STRING_LENGTH + 50];
 
-    strncpy(safePropName, propName, STRING_LENGTH);
+    strncpy(safePropName, propName, STRING_LENGTH + 50);
+    safePropName[STRING_LENGTH - 49] = '\0';
 
     // Replace spaces with underscores
     for (int i = 0; safePropName[i] != '\0'; i++) 
@@ -1071,7 +1075,9 @@ void constructFilePath(char* filepath, const char* directory, const char* propNa
     }
 
     // Construct the filepath
-    strncpy(filepath, directory, STRING_LENGTH);
+    strncpy(filepath, directory, STRING_LENGTH + 50);
+    filepath[STRING_LENGTH - 49] = '\0';
+
     strcat(filepath, safePropName);
     strcat(filepath, ".txt");
 }
