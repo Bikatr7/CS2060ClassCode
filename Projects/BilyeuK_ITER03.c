@@ -34,6 +34,9 @@
 #define MAX_RATE 1000
 #define DISCOUNT_MULTIPLIER 2
 
+// file directory
+#define PROPERY_FOLDER "C:\\Users\\Tetra\\CS2060Project\\CS2060Project"
+
 //--------------------start-of-Property------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 typedef struct
@@ -128,7 +131,7 @@ void printNightsCharges(unsigned int nights, int charges);
 void printSummaryReport(Property* property, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]);
 
 // Prints the rental property summary reports.
-void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]);
+void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES], const char* directory);
 
 //-------------------------Interactive-Modes-------------------------/
 
@@ -199,7 +202,7 @@ int main()
         bool exitRentalMode = rentalMode(propertiesHead, CORRECT_ID, CORRECT_PASSCODE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS, CATEGORY_NAMES);
 
         if (exitRentalMode)
-            printSummaryReports(propertiesHead, CATEGORY_NAMES);
+            printSummaryReports(propertiesHead, CATEGORY_NAMES, PROPERY_FOLDER);
     }
 
     puts("Exiting AirUCCS.");
@@ -614,7 +617,7 @@ void printAllProperties(PropertyNode* head)
 
     PropertyNode* current = head;
 
-    puts("\nAvailable Rental Properties:\n");
+    puts("\nAvailable Rental Properties:");
     while (current != NULL) 
     {
         printRentalPropertyInfo(&current->data);
@@ -741,7 +744,7 @@ void printSummaryReport(Property* property, const char* CATEGORY_NAMES[RENTER_SU
 
 //--------------------start-of-printSummaryReports()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]) 
+void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES], const char* directory)
 {
 
     /*
@@ -758,6 +761,7 @@ void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_S
     while (current != NULL) 
     {
         printSummaryReport(&current->data, CATEGORY_NAMES);
+        writeToFile(&current->data, directory);
         current = current->next;
     }
 }
@@ -791,7 +795,8 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
 
     bool exitRentalMode = false;
 
-    int currNights, currCharge;
+    int currNights = sentinel;
+    int currCharge = 0; 
 
     char rentAnother = 'n';
 
@@ -821,6 +826,7 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
             puts("Do you want to rent another property? (y/n): ");
             rentAnother = getSingleCharacterInput();
         }
+
     } while (rentAnother == 'y' || rentAnother == 'Y' || currNights == sentinel);
 
     // Check if user wants to exit and enter owner mode
@@ -991,7 +997,7 @@ PropertyNode* selectProperty(PropertyNode* head)
     char propName[STRING_LENGTH];
     PropertyNode* current = head;
 
-    puts("Enter the name of the property you want to rent: ");
+    puts("\nEnter the name of the property you want to rent: ");
     clearBufferAndFgets(propName, STRING_LENGTH);
 
     while (current != NULL) 
@@ -1003,7 +1009,8 @@ PropertyNode* selectProperty(PropertyNode* head)
         current = current->next;
     }
 
-    printf("No property found with the name: %s\n", propName);
+    puts("----------------------------------------");
+    printf(\n"No property found with the name: %s\n", propName);
     return NULL;
 }
 
