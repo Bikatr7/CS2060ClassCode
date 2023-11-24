@@ -230,6 +230,7 @@ void setupProperty(Property* property, int minNights, int maxNights, int minRate
     * sentinel (int): The value that will end the loop.
     * numCategories (int): The number of categories for the survey.
     * maxRenters (int): The number of renters for the survey.
+    * multiplier (int): The multiplier for the discount.
     *
     */
 
@@ -636,6 +637,7 @@ void printPropertyRatings(Property* property, const char* CATEGORY_NAMES[RENTER_
     *
     * Parameters:
     * property (Property*): The rental property to print the ratings for.
+    * CATEGORY_NAMES (const char*): The names of the categories for the survey.
     *
     */
 
@@ -710,6 +712,7 @@ void printSummaryReport(Property* property, const char* CATEGORY_NAMES[RENTER_SU
     * 
     * Parameters:
     * property (Property*): The rental property to print the summary report for.
+    * CATEGORY_NAMES (const char*): The names of the categories for the survey.
     * 
     */
     
@@ -745,7 +748,7 @@ void printSummaryReport(Property* property, const char* CATEGORY_NAMES[RENTER_SU
 
 //--------------------start-of-printSummaryReports()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES], const char* directory)
+void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES], const char* DIRECTORY)
 {
 
     /*
@@ -754,6 +757,8 @@ void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_S
     * 
     * Parameters:
     * head (PropertyNode*): The head of the linked list.
+    * CATEGORY_NAMES (const char*): The names of the categories for the survey.
+    * DIRECTORY (const char*): The directory to write the file to.
     * 
 	*/
 
@@ -762,7 +767,7 @@ void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_S
     while (current != NULL) 
     {
         printSummaryReport(&current->data, CATEGORY_NAMES);
-        writeToFile(&current->data, directory);
+        writeToFile(&current->data, DIRECTORY);
         current = current->next;
     }
 }
@@ -776,21 +781,17 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
     * Runs the rental mode.
     * 
     * Parameters:
-    * property (Property*): The rental property to run the rental mode for.
+    * head (PropertyNode*): The head of the linked list.
     * correctUsername (char[]): The correct username for the rental property.
     * correctPassword (char[]): The correct password for the rental property.
-    * minNights (int): The minimum number of nights the user can enter.
-    * maxNights (int): The maximum number of nights the user can enter.
-    * minRate (int): The minimum rate the user can enter.
-    * maxRate (int): The maximum rate the user can enter.
     * sentinel (int): The value that will end the loop.
     * maxAttempts (int): The maximum number of login attempts.
-    * multiplier (int): The multiplier for the discount.
+    * CATEGORY_NAMES (const char*): The names of the categories for the survey.
     * 
     * Returns:
-    * bool: Whether or not the user wants to exit rental mode.
+    * exitRentalMode (bool): Whether or not the user wants to exit the rental mode.
     * 
-    */
+	*/
 
     PropertyNode* selectedProperty;
 
@@ -832,7 +833,6 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
             }
             else 
             {
-
                 exitRentalMode = ownerMode(correctUsername, correctPassword, maxAttempts);
             }
         }
@@ -901,6 +901,8 @@ void getRatings(Property* property, int sentinel, const char* CATEGORY_NAMES[REN
     * Parameters:
     * property (Property*): The rental property to get the ratings for.
     * sentinel (int): The value that will end the loop.
+    * CATEGORY_NAMES (const char*): The names of the categories for the survey.
+    * 
     */
 
     const int MIN_STARS = 1;
@@ -939,8 +941,10 @@ PropertyNode* createPropertyNode(Property* property)
         puts("Error allocating memory");
         return NULL;
     }
+
     newNode->data = *property;
     newNode->next = NULL;
+
     return newNode;
 }
 
@@ -1014,6 +1018,7 @@ PropertyNode* selectProperty(PropertyNode* head)
 
     puts("----------------------------------------");
     printf("\nNo property found with the name: %s\n", propName);
+
     return NULL;
 }
 
@@ -1046,7 +1051,7 @@ void freePropertyList(PropertyNode** head)
 
 //----------------------start-of-constructFilePath()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void constructFilePath(char* filepath, const char* directory, const char* propName) 
+void constructFilePath(char* filepath, const char* DIRECTORY, const char* PROPERTY_NAME) 
 {
 
     /*
@@ -1055,14 +1060,14 @@ void constructFilePath(char* filepath, const char* directory, const char* propNa
     * 
     * Parameters:
     * filepath (char*): The filepath to construct.
-    * directory (const char*): The directory to write the file to.
-    * propName (const char*): The name of the rental property.
+    * DIRECTORY (const char*): The directory to write the file to.
+    * PROPERTY_NAME (const char*): The name of the rental property.
     * 
 	*/
 
     char safePropName[STRING_LENGTH + 50];
 
-    strncpy(safePropName, propName, STRING_LENGTH + 50);
+    strncpy(safePropName, PROPERTY_NAME, STRING_LENGTH + 50);
     safePropName[STRING_LENGTH - 49] = '\0';
 
     // Replace spaces with underscores
@@ -1075,7 +1080,7 @@ void constructFilePath(char* filepath, const char* directory, const char* propNa
     }
 
     // Construct the filepath
-    strncpy(filepath, directory, STRING_LENGTH + 50);
+    strncpy(filepath, DIRECTORY, STRING_LENGTH + 50);
     filepath[STRING_LENGTH - 49] = '\0';
 
     strcat(filepath, safePropName);
@@ -1084,7 +1089,7 @@ void constructFilePath(char* filepath, const char* directory, const char* propNa
 
 //--------------------start-of-writeToFile()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void writeToFile(Property* property, const char* directory) 
+void writeToFile(Property* property, const char* DIRECTORY) 
 {
 
     /*
@@ -1093,13 +1098,13 @@ void writeToFile(Property* property, const char* directory)
     * 
     * Parameters:
     * property (Property*): The rental property to write to the file.
-    * directory (const char*): The directory to write the file to.
+    * DIRECTORY (const char*): The directory to write the file to.
     * 
     */
 
     char filename[STRING_LENGTH + 50];
 
-    constructFilePath(filename, directory, property->propName);
+    constructFilePath(filename, DIRECTORY, property->propName);
 
     FILE* file = fopen(filename, "w");
     if (file == NULL) 
