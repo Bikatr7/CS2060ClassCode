@@ -130,6 +130,11 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts);
 // Get the ratings for each renter.
 void getRatings(Property* property, int sentinel, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]);
 
+//-------------------------Linked-List-Util-------------------------/
+
+// Creates a new property node.
+PropertyNode* createPropertyNode(Property* property);
+
 //--------------------start-of-main()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 int main() 
@@ -726,4 +731,33 @@ void getRatings(Property* property, int sentinel, const char* CATEGORY_NAMES[REN
         int rating = getValidInt(MIN_STARS, MAX_STARS, sentinel);
         property->reviews[property->totalRenters-1][ii] = rating;
     }
+}
+
+//----------------------start-of-createPropertyNode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+PropertyNode* createPropertyNode(Property* property) 
+{
+
+    /*
+    * 
+    * Creates a new property node.
+    * 
+    * Parameters:
+    * property (Property*): The rental property to create the node for.
+    * 
+    * Returns:
+    * newNode (PropertyNode*): The new property node.
+    * 
+	*/
+
+    PropertyNode* newNode = (PropertyNode*)malloc(sizeof(PropertyNode));
+
+    if (newNode == NULL) 
+    {
+        puts("Error allocating memory");
+        return NULL;
+    }
+    newNode->data = *property;
+    newNode->next = NULL;
+    return newNode;
 }
