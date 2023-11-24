@@ -90,7 +90,7 @@ int calculateCharges(unsigned int nights, unsigned int interval1Nights, unsigned
 void calculateCategoryAverages(Property* property);
 
 // Calculate the average rating for each category.
-int calculateOverallSatisfaction(Property* property);
+double calculateOverallSatisfaction(Property* property);
 
 //-------------------------Data-Output-------------------------/
 
@@ -104,7 +104,7 @@ void printPropertyRatings(Property* property, const char* CATEGORY_NAMES[RENTER_
 void printNightsCharges(unsigned int nights, int charges);
 
 // Prints the rental property summary report.
-void printSummaryReport(Property* property);
+void printSummaryReport(Property* property, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES]);
 
 //-------------------------Interactive-Modes-------------------------/
 
@@ -135,7 +135,7 @@ int main()
         bool exitRentalMode = rentalMode(&property, CORRECT_ID, CORRECT_PASSCODE, MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, LOGIN_MAX_ATTEMPTS, DISCOUNT_MULTIPLIER, CATEGORY_NAMES);
 
         if (exitRentalMode)
-            printSummaryReport(&property);
+            printSummaryReport(&property, CATEGORY_NAMES);
     }
 
     puts("Exiting AirUCCS.");
@@ -395,7 +395,7 @@ void calculateCategoryAverages(Property* property)
 
 //----------------------start-of-calculateOverallSatisfaction()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int calculateOverallSatisfaction(Property* property)
+double calculateOverallSatisfaction(Property* property)
 {
     /*
     * 
@@ -408,7 +408,7 @@ int calculateOverallSatisfaction(Property* property)
     * total: The overall satisfaction for the rental property.
     */
 
-    int total = 0;
+    double total = 0;
 
     for (size_t i = 0; i < property->numCategories; ++i)
     {
@@ -442,9 +442,9 @@ void printRentalPropertyInfo(Property* property)
     printf("Name: %-15s\n", property->propName);
     printf("Location: %-15s\n", property->locName);
     printf("Property can be rented for %d to %d nights\n", property->minNights, property->maxNights);
-    printf("%d a night for the first %d nights\n", property->rate, property->interval1);
-    printf("%d discount rate a night for night %d to %d\n", property->discount, property->interval1 + 1, property->interval2);
-    printf("%d discount rate a night for each night over %d\n", property->discount * property->mutliplier, property->interval2);
+    printf("$%d a night for the first %d nights\n", property->rate, property->interval1);
+    printf("$%d discount rate a night for night %d to %d\n", property->discount, property->interval1 + 1, property->interval2);
+    printf("$%d discount rate a night for each night over %d\n", property->discount * property->mutliplier, property->interval2);
 
 }
 
@@ -524,7 +524,7 @@ void printNightsCharges(unsigned int nights, int charges)
 
 //--------------------start-of-printSummaryReport()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void printSummaryReport(Property* property) 
+void printSummaryReport(Property* property, const char* CATEGORY_NAMES[RENTER_SURVEY_CATEGORIES])
 {
     /*
     * 
@@ -537,6 +537,7 @@ void printSummaryReport(Property* property)
     
     calculateCategoryAverages(property);
 
+    // standard output print
     puts("============================================================");
     puts("                  Rental Property Report                    ");
     puts("============================================================");
@@ -548,11 +549,17 @@ void printSummaryReport(Property* property)
     printf("Total Charges Collected: $%d\n", property->totalCharge);
     puts("------------------------------------------------------------");
     puts("Category Rating Averages:");
-    printf("1. Check-in Process: %.1f/5\n", property->categoryAverages[0]);
-    printf("2. Cleanliness: %.1f/5\n", property->categoryAverages[1]);
-    printf("3. Amenities: %.1f/5\n", property->categoryAverages[2]);
+
+
+    // category averages print
+    for (size_t i = 0; i < property->numCategories; i++)
+	{
+		printf("%zu. %s: %.1f/5\n", i + 1, CATEGORY_NAMES[i], property->categoryAverages[i]);
+	}
+
+    // overall satisfaction print
     puts("------------------------------------------------------------");
-    printf("Overall Satisfaction: %d\n", calculateOverallSatisfaction(property));
+    printf("Overall Satisfaction: %.1f/5\n", calculateOverallSatisfaction(property));
     puts("============================================================");
     puts("Thank you for using AirUCCS. Have a great day!");
     puts("============================================================\n");
