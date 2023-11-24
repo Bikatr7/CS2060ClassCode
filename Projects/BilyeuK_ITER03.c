@@ -186,7 +186,7 @@ int main()
     {
         do 
         {
-            // Set up the propertys
+            // Set up the property
             Property* newProperty = setupProperty(MIN_RENTAL_NIGHTS, MAX_RENTAL_NIGHTS, MIN_RATE, MAX_RATE, SENTINAL_NEG1, RENTER_SURVEY_CATEGORIES, VACATION_RENTERS, DISCOUNT_MULTIPLIER);
 
             // Insert the property into the linked list
@@ -232,6 +232,7 @@ Property* setupProperty(int minNights, int maxNights, int minRate, int maxRate, 
     *
     */
 
+    // They said dynamically allocate memory for the property, so I assume they want me to use malloc
     Property* property = (Property*)malloc(sizeof(Property));
 
     if (property == NULL) 
@@ -410,6 +411,7 @@ int getValidInt(int min, int max, int sentinel, bool allowSentinel)
             }
         }
 
+        // Cause I didn't like -1 being allowed for the properrty setup integers
         if(allowSentinel)
             printf("Error: Please enter a valid value (%d to %d or %d to exit).\n", min, max, sentinel);
         else
@@ -783,7 +785,7 @@ void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_S
         current = current->next;
     }
 
-    // Goodbye message outside the loop
+    // Goodbye message outside the loop cause it's only supposed to print once, and i kept having a f*** ton of problems with it due to sleep deprivation
     puts("============================================================");
     puts("Thank you for using AirUCCS. Have a great day!");
     puts("============================================================");
@@ -814,6 +816,8 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
 
     bool exitRentalMode = false;
 
+    bool printNotFound = false;
+
     int currNights = 0;
     int currCharge = 0;
 
@@ -821,8 +825,14 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
     {
         printAllProperties(head);
 
+    	if(printNotFound)
+		{
+			puts("\nError: Property not found.");
+			printNotFound = false;
+		}
+
         selectedProperty = selectProperty(head);
-        if (selectedProperty)
+        if(selectedProperty)
         {
             puts("\nEnter the number of nights you want to rent the property: ");
             currNights = getValidInt(selectedProperty->data.minNights, selectedProperty->data.maxNights, sentinel, true);
@@ -832,6 +842,7 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
                 exitRentalMode = ownerMode(correctUsername, correctPassword, maxAttempts);
 
             }
+            // If we're not exiting rental mode, calculate the charges and other stuff
             else
             {
                 currCharge = calculateCharges(currNights, selectedProperty->data.interval1, selectedProperty->data.interval2, selectedProperty->data.rate, selectedProperty->data.discount, DISCOUNT_MULTIPLIER);
@@ -844,6 +855,10 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
 
                 getRatings(&selectedProperty->data, sentinel, CATEGORY_NAMES);
             }
+        }
+        else
+        {
+            printNotFound = true;
         }
     }
 
@@ -879,6 +894,7 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
 
         getUserCredentials(username, password);
 
+        // Assuming they want case insensitive comparison, didn't see it specify in the assignment
         if(strcmp(username, correctUsername) == 0 && strcmp(password, correctPassword) == 0)
         {
             puts("You have successfully logged in.\n");
@@ -1026,9 +1042,6 @@ PropertyNode* selectProperty(PropertyNode* head)
         }
         current = current->next;
     }
-
-    puts("----------------------------------------");
-    printf("\nNo property found with the name: %s\n", propName);
 
     return NULL;
 }
