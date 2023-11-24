@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <ctype.h>
 
 //Maximum length of a string
 #define STRING_LENGTH 80
@@ -85,6 +86,9 @@ void getUserCredentials(char* username, char* password);
 
 // Clears the buffer and gets a string from the user.
 void clearBufferAndFgets(char* str, int size);
+
+// Compares two strings regardless of case and returns an integer value based on the comparison.
+int stringCompare(const char* s1, const char* s2);
 
 // Gets a valid integer from the user.
 int getValidInt(int min, int max, int sentinel);
@@ -181,7 +185,7 @@ int main()
 
     puts("Exiting AirUCCS.");
 
-    // TODO: Implement and call a function that frees the linked list memory
+    freePropertyList(&propertiesHead);
 
     return 0;
 }
@@ -301,6 +305,45 @@ void clearBufferAndFgets(char* str, int size)
         // Clear the rest of the buffer until newline is found or EOF
         while ((getchar()) != '\n') {}
     }
+}
+
+//--------------------start-of-stringCompare()------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+int stringCompare(const char* s1, const char* s2)
+{
+    /*
+    *
+    * Compares two strings regardless of case and returns an integer value based on the comparison.
+    *
+    * Parameters:
+    * s1 (const char*) : The first string to compare.
+    * s2 (const char*) : The second string to compare.
+    *
+    */
+
+    char s1_lower[80];
+    char s2_lower[80];
+
+    // null-terminate.
+    strncpy(s1_lower, s1, 80);
+    s1_lower[79] = '\0';
+
+    // null-terminate.
+    strncpy(s2_lower, s2, 80);
+    s2_lower[79] = '\0';
+
+    // Convert both strings to lowercase.
+    for (int i = 0; s1_lower[i]; i++)
+    {
+        s1_lower[i] = tolower((unsigned char)s1_lower[i]);
+    }
+    for (int i = 0; s2_lower[i]; i++)
+    {
+        s2_lower[i] = tolower((unsigned char)s2_lower[i]);
+    }
+
+    return strcmp(s1_lower, s2_lower);
+
 }
 
 //--------------------start-of-getValidInt()----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -806,7 +849,7 @@ void insertPropertyAlphabetically(PropertyNode** head, Property* property)
 
     PropertyNode* newNode = createPropertyNode(property);
 
-    if (*head == NULL || strcmp((*head)->data.propName, property->propName) >= 0) 
+    if (*head == NULL || stringCompare((*head)->data.propName, property->propName) >= 0) 
     {
         newNode->next = *head;
         *head = newNode;
@@ -815,7 +858,7 @@ void insertPropertyAlphabetically(PropertyNode** head, Property* property)
     {
         PropertyNode* current = *head;
 
-        while (current->next != NULL && strcmp(current->next->data.propName, property->propName) < 0) 
+        while (current->next != NULL && stringCompare(current->next->data.propName, property->propName) < 0) 
         {
             current = current->next;
         }
@@ -850,7 +893,7 @@ PropertyNode* selectProperty(PropertyNode* head)
 
     while (current != NULL) 
     {
-        if (strcmp(current->data.propName, propName) == 0) 
+        if (stringCompare(current->data.propName, propName) == 0)
         {
             return current;
         }
