@@ -477,7 +477,7 @@ char getSingleCharacterInput()
 
         if (tolower(choice) == 'y' || tolower(choice) == 'n')
         {
-            return choice;
+            return tolower(choice);
         }
         else
         {
@@ -755,9 +755,7 @@ void printSummaryReport(Property* property, const char* CATEGORY_NAMES[RENTER_SU
     // overall satisfaction print
     puts("------------------------------------------------------------");
     printf("Overall Satisfaction: %.1f/5\n", calculateOverallSatisfaction(property));
-    puts("============================================================");
-    puts("Thank you for using AirUCCS. Have a great day!");
-    puts("============================================================\n");
+
 }
 
 //--------------------start-of-printSummaryReports()-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -778,12 +776,17 @@ void printSummaryReports(PropertyNode* head, const char* CATEGORY_NAMES[RENTER_S
 
     PropertyNode* current = head;
 
-    while (current != NULL) 
+    while (current != NULL)
     {
         printSummaryReport(&current->data, CATEGORY_NAMES);
         writeToFile(&current->data, DIRECTORY);
         current = current->next;
     }
+
+    // Goodbye message outside the loop
+    puts("============================================================");
+    puts("Thank you for using AirUCCS. Have a great day!");
+    puts("============================================================");
 }
 
 //--------------------start-of-rentalMode()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -814,19 +817,22 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
     int currNights = 0;
     int currCharge = 0;
 
-    char rentAnother = 'n';
-
     while (!exitRentalMode)
     {
         printAllProperties(head);
 
         selectedProperty = selectProperty(head);
-        if (selectedProperty) 
+        if (selectedProperty)
         {
             puts("\nEnter the number of nights you want to rent the property: ");
             currNights = getValidInt(selectedProperty->data.minNights, selectedProperty->data.maxNights, sentinel, true);
 
-            if (currNights != sentinel) 
+            if(currNights == sentinel)
+            {
+                exitRentalMode = ownerMode(correctUsername, correctPassword, maxAttempts);
+
+            }
+            else
             {
                 currCharge = calculateCharges(currNights, selectedProperty->data.interval1, selectedProperty->data.interval2, selectedProperty->data.rate, selectedProperty->data.discount, DISCOUNT_MULTIPLIER);
 
@@ -835,19 +841,8 @@ bool rentalMode(PropertyNode* head, char correctUsername[], char correctPassword
                 selectedProperty->data.totalNights += currNights;
 
                 printNightsCharges(currNights, currCharge);
-                getRatings(&selectedProperty->data, sentinel, CATEGORY_NAMES);
 
-                // Check if user wants to rent another property
-                puts("Do you want to rent another property? (y/n): ");
-                rentAnother = getSingleCharacterInput();
-                if (rentAnother == 'n' || rentAnother == 'N') 
-                {
-                    exitRentalMode = true;
-                }
-            }
-            else 
-            {
-                exitRentalMode = ownerMode(correctUsername, correctPassword, maxAttempts);
+                getRatings(&selectedProperty->data, sentinel, CATEGORY_NAMES);
             }
         }
     }
@@ -903,6 +898,8 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
 
     return loginSuccess;
 }
+
+
 
 //----------------------start-of-getRatings()--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
