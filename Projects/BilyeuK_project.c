@@ -23,8 +23,8 @@
 #define RENTER_SURVEY_CATEGORIES 3
 
 //Rental property login and sentinal values
-#define CORRECT_ID "id"
-#define CORRECT_PASSCODE "ab"
+#define CORRECT_ID "a"
+#define CORRECT_PASSCODE "b"
 #define LOGIN_MAX_ATTEMPTS 2
 #define SENTINAL_NEG1 -1
 
@@ -246,6 +246,12 @@ Property* setupProperty(int minNights, int maxNights, int minRate, int maxRate, 
     printf("Minimum rate: $%d\n", minRate);
     printf("Maximum rate: $%d\n", maxRate);
 
+    puts("Enter the rental property name: ");
+    clearBufferAndFgets(property->propName, STRING_LENGTH);
+
+    puts("Enter the rental property location: ");
+    clearBufferAndFgets(property->locName, STRING_LENGTH);
+
     puts("\nEnter the number of nights until the first discount interval: ");
     property->interval1 = getValidInt(minNights, maxNights, sentinel, false);
 
@@ -257,12 +263,6 @@ Property* setupProperty(int minNights, int maxNights, int minRate, int maxRate, 
 
     puts("Enter the discount rate: ");
     property->discount = getValidInt(minRate, property->rate - 1, sentinel, false);
-
-    puts("Enter the rental property name: ");
-    clearBufferAndFgets(property->propName, STRING_LENGTH);
-
-    puts("Enter the rental property location: ");
-    clearBufferAndFgets(property->locName, STRING_LENGTH);
 
     property->totalCharge = 0;
     property->totalNights = 0;
