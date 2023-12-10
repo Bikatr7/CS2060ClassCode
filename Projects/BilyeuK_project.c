@@ -23,8 +23,8 @@
 #define RENTER_SURVEY_CATEGORIES 3
 
 //Rental property login and sentinal values
-#define CORRECT_ID "a"
-#define CORRECT_PASSCODE "b"
+#define CORRECT_ID "kadenbilyeu"
+#define CORRECT_PASSCODE "atottalysecurepassword7!?!"
 #define LOGIN_MAX_ATTEMPTS 2
 #define SENTINAL_NEG1 -1
 
@@ -246,7 +246,7 @@ Property* setupProperty(int minNights, int maxNights, int minRate, int maxRate, 
     printf("Minimum rate: $%d\n", minRate);
     printf("Maximum rate: $%d\n", maxRate);
 
-    puts("Enter the rental property name: ");
+    puts("\nEnter the rental property name: ");
     clearBufferAndFgets(property->propName, STRING_LENGTH);
 
     puts("Enter the rental property location: ");
@@ -897,7 +897,7 @@ bool ownerMode(char correctUsername[], char correctPassword[], int maxAttempts)
         // Assuming they want case insensitive comparison, didn't see it specify in the assignment
         if(strcmp(username, correctUsername) == 0 && strcmp(password, correctPassword) == 0)
         {
-            puts("You have successfully logged in.\n");
+            puts("\nYou have successfully logged in.\n");
             loginSuccess = true;
         }
         else
